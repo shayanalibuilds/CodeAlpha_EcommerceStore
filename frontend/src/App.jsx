@@ -69,10 +69,36 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
-      <footer className="border-t border-brand-100 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-brand-700/60">
-          Northwind Market — a CodeAlpha Task 1 internship demo. Payments are mocked; no real
-          card is charged.
+      <footer className="border-t border-stone-200 bg-white">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:grid-cols-3">
+          <div>
+            <img src="/brand/logo-mark.svg" alt="Northwind Market" className="h-10 w-10" />
+            <p className="mt-3 max-w-xs text-xs text-stone-500">
+              Payments are mocked. No real card is charged.
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Shop</p>
+            <ul className="mt-2 space-y-1.5 text-sm">
+              {[
+                ['books', 'Books'],
+                ['stationery', 'Stationery'],
+                ['bags', 'Bags'],
+                ['audio', 'Audio'],
+                ['desk', 'Desk & Drinkware'],
+              ].map(([key, label]) => (
+                <li key={key}>
+                  <Link to={`/?category=${key}`} className="text-stone-600 hover:text-brand-700">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="text-sm text-stone-500 sm:text-right">
+            <p>© 2026 Northwind Market</p>
+            <p className="mt-1 text-xs">A CodeAlpha Task 1 internship demo.</p>
+          </div>
         </div>
       </footer>
     </div>
