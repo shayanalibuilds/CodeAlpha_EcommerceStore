@@ -10,9 +10,41 @@ import EmptyState from '../components/EmptyState.jsx';
 import { PageLoader } from '../components/Spinner.jsx';
 
 const PAYMENT_METHODS = [
-  { value: 'card', label: 'Card (mock)', hint: 'Demo checkout — no real card is charged.' },
-  { value: 'upi', label: 'UPI (mock)', hint: 'Demo checkout — no real UPI is debited.' },
-  { value: 'cash', label: 'Cash on delivery', hint: 'Pay when the parcel arrives.' },
+  {
+    value: 'card',
+    label: 'Card (mock)',
+    hint: 'Demo checkout — no real card is charged.',
+    icon: (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <rect x="2.5" y="5.5" width="19" height="13" rx="2.5" />
+        <path strokeLinecap="round" d="M2.5 10h19" />
+        <path strokeLinecap="round" d="M6 14.5h4" />
+      </svg>
+    ),
+  },
+  {
+    value: 'upi',
+    label: 'UPI (mock)',
+    hint: 'Demo checkout — no real UPI is debited.',
+    icon: (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <rect x="7" y="2.5" width="10" height="19" rx="2.5" />
+        <path strokeLinecap="round" d="M11 18.5h2" />
+      </svg>
+    ),
+  },
+  {
+    value: 'cash',
+    label: 'Cash on delivery',
+    hint: 'Pay when the parcel arrives.',
+    icon: (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <rect x="2.5" y="6.5" width="19" height="11" rx="2" />
+        <circle cx="12" cy="12" r="2.75" />
+        <path strokeLinecap="round" d="M6 12h.01M18 12h.01" />
+      </svg>
+    ),
+  },
 ];
 
 const EMPTY_FORM = {
@@ -119,17 +151,27 @@ export default function CheckoutPage() {
           </div>
 
           <h2 className="mt-8 font-semibold text-brand-700">Payment method</h2>
-          <p className="mt-1 text-xs text-brand-700/60">
-            This store has no real payment processing — every method below is a mock.
-          </p>
+          <div
+            className="mt-2 flex items-start gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-sm text-amber-800 ring-1 ring-amber-200"
+            role="note"
+          >
+            <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path strokeLinecap="round" d="M12 8h.01M12 11v5" />
+            </svg>
+            <span>
+              <strong className="font-semibold">Payments are mocked.</strong> No real card is
+              charged — this demo store only writes an order.
+            </span>
+          </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {PAYMENT_METHODS.map((pm) => (
               <label
                 key={pm.value}
-                className={`flex cursor-pointer flex-col rounded-lg p-3 ring-1 transition-colors ${
+                className={`flex cursor-pointer flex-col rounded-xl p-3 ring-1 transition-colors ${
                   paymentMethod === pm.value
-                    ? 'bg-brand-50 ring-2 ring-brand-600'
-                    : 'bg-white ring-brand-100 hover:bg-brand-50/60'
+                    ? 'bg-brand-50 ring-2 ring-brand-700'
+                    : 'bg-white ring-brand-200 hover:bg-brand-50/60'
                 }`}
               >
                 <span className="flex items-center gap-2 text-sm font-semibold text-brand-900">
@@ -139,8 +181,9 @@ export default function CheckoutPage() {
                     value={pm.value}
                     checked={paymentMethod === pm.value}
                     onChange={() => setPaymentMethod(pm.value)}
-                    className="accent-brand-600"
+                    className="accent-brand-700"
                   />
+                  <span className="text-brand-700">{pm.icon}</span>
                   {pm.label}
                 </span>
                 <span className="mt-1 pl-6 text-xs text-brand-700/60">{pm.hint}</span>

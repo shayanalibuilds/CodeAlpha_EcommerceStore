@@ -7,10 +7,10 @@ export const STATUS_LABELS = {
 };
 
 export const STATUS_CHIP = {
-  placed: 'bg-sky-50 text-sky-700 ring-sky-200',
-  packed: 'bg-amber-50 text-amber-700 ring-amber-200',
-  shipped: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 ring-red-200',
+  placed: 'bg-amber-50 text-amber-700 ring-amber-200',
+  packed: 'bg-violet-50 text-violet-700 ring-violet-200',
+  shipped: 'bg-sky-50 text-sky-700 ring-sky-200',
+  cancelled: 'bg-stone-100 text-stone-600 ring-stone-200',
 };
 
 export const PAYMENT_LABELS = {

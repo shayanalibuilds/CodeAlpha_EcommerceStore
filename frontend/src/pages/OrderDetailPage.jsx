@@ -12,6 +12,63 @@ import {
   formatDate,
 } from '../components/orderMeta.js';
 
+// Progress timeline for the three fulfilment states this demo supports.
+// Cancelled orders show a notice instead of a timeline.
+function StatusTimeline({ status }) {
+  if (status === 'cancelled') {
+    return (
+      <p className="mt-5 rounded-xl bg-stone-50 px-4 py-3 text-sm text-stone-600 ring-1 ring-stone-200">
+        This order was cancelled — its items were returned to stock.
+      </p>
+    );
+  }
+
+  const steps = ['placed', 'packed', 'shipped'];
+  const currentIdx = steps.indexOf(status);
+
+  return (
+    <ol className="mt-6 flex items-center" aria-label="Order progress">
+      {steps.map((step, idx) => {
+        const done = idx < currentIdx;
+        const active = idx === currentIdx;
+        return (
+          <li key={step} className={`flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
+            <div className="flex flex-col items-center gap-1">
+              <span
+                aria-hidden="true"
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ring-2 ${
+                  done
+                    ? 'bg-brand-700 text-white ring-brand-700'
+                    : active
+                      ? 'bg-brand-100 text-brand-800 ring-brand-700'
+                      : 'bg-white text-stone-400 ring-stone-200'
+                }`}
+              >
+                {done ? '✓' : idx + 1}
+              </span>
+              <span
+                className={`text-xs font-medium ${
+                  done || active ? 'text-brand-800' : 'text-stone-400'
+                }`}
+              >
+                {STATUS_LABELS[step]}
+              </span>
+            </div>
+            {idx < steps.length - 1 && (
+              <span
+                aria-hidden="true"
+                className={`mx-2 mb-5 h-0.5 flex-1 rounded ${
+                  done ? 'bg-brand-700' : 'bg-stone-200'
+                }`}
+              />
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export default function OrderDetailPage() {
   const { id } = useParams();
   const location = useLocation();
@@ -72,6 +129,8 @@ export default function OrderDetailPage() {
           </div>
           <span className={`chip ${STATUS_CHIP[order.status]}`}>{STATUS_LABELS[order.status]}</span>
         </div>
+
+        <StatusTimeline status={order.status} />
 
         <ul className="mt-6 divide-y divide-brand-50">
           {order.items.map((item, idx) => (
