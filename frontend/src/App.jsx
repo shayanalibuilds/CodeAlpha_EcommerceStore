@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
-import HomePage from './pages/HomePage.jsx';
+import CatalogPage from './pages/CatalogPage.jsx';
+import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
@@ -12,7 +13,8 @@ export default function App() {
       <Navbar />
       <div className="flex-1">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<CatalogPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
