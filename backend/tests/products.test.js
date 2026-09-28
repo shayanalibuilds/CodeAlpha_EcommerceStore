@@ -142,7 +142,7 @@ describe('POST /api/products (admin only)', () => {
   it('explains how to fix invalid fields', async () => {
     const admin = await createAdmin();
     const res = await api().post('/api/products').set('Authorization', `Bearer ${admin.token}`).send({
-      title: 'No', description: 'Too short.', priceCents: 0, category: 'books', stock: -2,
+      title: 'No', description: 'Short.', priceCents: 0, category: 'books', stock: -2,
     });
 
     expect(res.status).toBe(400);

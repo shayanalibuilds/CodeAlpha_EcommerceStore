@@ -131,6 +131,12 @@ describe('POST /api/orders (checkout)', () => {
     await addToCart(alice.token, pen, 2);   // fine (stock 10)
     await addToCart(alice.token, bag, 2);   // fine in cart (stock 2)
 
+    // Stock drops after add-to-cart (another buyer got the last unit first).
+    await api()
+      .patch(`/api/products/${bag}`)
+      .set('Authorization', `Bearer ${admin.token}`)
+      .send({ stock: 1 });
+
     const res = await api()
       .post('/api/orders')
       .set('Authorization', `Bearer ${alice.token}`)
@@ -140,7 +146,7 @@ describe('POST /api/orders (checkout)', () => {
     expect(res.body.error).toMatch(/Sprout Everyday Backpack/);
     // Neither product may be decremented — pens must be restored to 10.
     expect(await stockOf('gel-pen-rainbow-set')).toBe(10);
-    expect(await stockOf('sprout-everyday-backpack')).toBe(2);
+    expect(await stockOf('sprout-everyday-backpack')).toBe(1);
   });
 
   it('validates address fields with how-to-fix messages', async () => {

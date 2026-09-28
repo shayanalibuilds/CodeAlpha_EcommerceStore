@@ -32,8 +32,14 @@ async function seedProducts() {
   return Product.find({}).lean();
 }
 
-async function authed(token) {
-  return api().set('Authorization', `Bearer ${token}`);
+function authed(token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  return {
+    get: (url) => api().get(url).set(headers),
+    post: (url) => api().post(url).set(headers),
+    patch: (url) => api().patch(url).set(headers),
+    delete: (url) => api().delete(url).set(headers),
+  };
 }
 
 beforeAll(startDb);
