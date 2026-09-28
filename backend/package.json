@@ -1,0 +1,30 @@
+{
+  "name": "northwind-market-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Northwind Market — CodeAlpha Task 1 — backend API (Express + MongoDB + Mongoose)",
+  "author": "Shayan Ali Jalbani (shayanalibuilds)",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/seed/seed.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --forceExit"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.1.7",
+    "supertest": "^7.0.0"
+  }
+}

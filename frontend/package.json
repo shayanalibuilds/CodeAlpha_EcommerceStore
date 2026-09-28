@@ -1,0 +1,26 @@
+{
+  "name": "northwind-market-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Northwind Market — CodeAlpha Task 1 — frontend (React 18 + Vite + Tailwind)",
+  "author": "Shayan Ali Jalbani (shayanalibuilds)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.7",
+    "vite": "^5.4.0"
+  }
+}
