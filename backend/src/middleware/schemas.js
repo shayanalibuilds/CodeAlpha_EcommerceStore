@@ -66,3 +66,27 @@ export const productCreateSchema = z.object({
 });
 
 export const productUpdateSchema = productCreateSchema.partial();
+
+// ---- Cart ----
+const objectIdString = z
+  .string({ required_error: 'Product id is required.' })
+  .regex(/^[0-9a-fA-F]{24}$/, 'Use a valid product id.');
+
+export const cartAddSchema = z.object({
+  productId: objectIdString,
+  qty: z
+    .number({ invalid_type_error: 'Quantity must be a number.' })
+    .int('Quantity must be a whole number.')
+    .min(1, 'Quantity must be at least 1.')
+    .max(99, 'Quantity cannot be more than 99.')
+    .optional()
+    .default(1),
+});
+
+export const cartUpdateSchema = z.object({
+  qty: z
+    .number({ required_error: 'Quantity is required.', invalid_type_error: 'Quantity must be a number.' })
+    .int('Quantity must be a whole number.')
+    .min(1, 'Quantity must be at least 1.')
+    .max(99, 'Quantity cannot be more than 99.'),
+});

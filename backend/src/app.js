@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
+import cartRoutes from './routes/cart.js';
 import { HttpError } from './utils/httpError.js';
 
 const app = express();
@@ -21,6 +22,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Unknown API routes → JSON 404.
 app.use('/api', (req, res) => {
