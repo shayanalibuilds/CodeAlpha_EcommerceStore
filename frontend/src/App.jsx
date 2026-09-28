@@ -3,10 +3,16 @@ import Navbar from './components/Navbar.jsx';
 import CatalogPage from './pages/CatalogPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import CartPage from './pages/CartPage.jsx';
+import CheckoutPage from './pages/CheckoutPage.jsx';
+import OrdersPage from './pages/OrdersPage.jsx';
+import OrderDetailPage from './pages/OrderDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
+import AdminProductsPage from './pages/AdminProductsPage.jsx';
+import AdminOrdersPage from './pages/AdminOrdersPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import { RequireAuth, RequireAdmin } from './components/ProtectedRoute.jsx';
 
 export default function App() {
   return (
@@ -17,9 +23,49 @@ export default function App() {
           <Route path="/" element={<CatalogPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route
+            path="/checkout"
+            element={
+              <RequireAuth>
+                <CheckoutPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <RequireAuth>
+                <OrdersPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <RequireAuth>
+                <OrderDetailPage />
+              </RequireAuth>
+            }
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
+          <Route
+            path="/admin/products"
+            element={
+              <RequireAdmin>
+                <AdminProductsPage />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <RequireAdmin>
+                <AdminOrdersPage />
+              </RequireAdmin>
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
