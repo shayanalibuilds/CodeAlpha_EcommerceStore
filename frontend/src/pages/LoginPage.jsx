@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
+import AuthLayout from '../components/AuthLayout.jsx';
 
 const DEMO_ACCOUNTS = [
   { label: 'Customer demo', email: 'customer@example.com', password: 'password-customer-12' },
@@ -39,7 +40,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col px-4 py-10">
+    <AuthLayout>
       <h1 className="text-2xl font-bold text-brand-700">Sign in</h1>
       <p className="mt-1 text-sm text-brand-700/70">
         Welcome back. Your cart and orders are waiting.
@@ -107,6 +108,6 @@ export default function LoginPage() {
           ))}
         </div>
       </div>
-    </main>
+    </AuthLayout>
   );
 }

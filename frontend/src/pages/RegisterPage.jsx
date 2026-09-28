@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
+import AuthLayout from '../components/AuthLayout.jsx';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -34,7 +35,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col px-4 py-10">
+    <AuthLayout>
       <h1 className="text-2xl font-bold text-brand-700">Create account</h1>
       <p className="mt-1 text-sm text-brand-700/70">
         One quick form and you can start collecting study picks.
@@ -98,6 +99,6 @@ export default function RegisterPage() {
           </Link>
         </p>
       </form>
-    </main>
+    </AuthLayout>
   );
 }
