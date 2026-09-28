@@ -1,5 +1,9 @@
 # Northwind Market — CodeAlpha Full Stack Internship — Task 1: E-commerce Store
 
+<p align="center">
+  <img src="frontend/public/brand/logo-full.svg" alt="Northwind Market logo" width="340" />
+</p>
+
 Author: **Shayan Ali Jalbani** (@shayanalibuilds)
 Program: CodeAlpha Full Stack Development — Month 1 (M1), Task 1
 Stack: **MERN** (MongoDB + Mongoose, Express + Node.js, React 18 + Vite, Tailwind CSS)
