@@ -21,43 +21,53 @@ export default function ProductCard({ product }) {
   };
 
   const out = product.stock === 0;
+  const low = !out && product.stock <= 5;
 
   return (
     <div className="card flex flex-col transition-shadow hover:shadow-md">
       <Link to={`/products/${product.id}`} className="group block" aria-label={product.title}>
-        <div className="aspect-[4/3] overflow-hidden bg-brand-50">
+        <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
           <img
             src={product.imageUrl || '/images/products/placeholder.svg'}
             alt={product.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]"
+            className={`h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03] ${
+              out ? 'opacity-60' : ''
+            }`}
           />
+          {out && (
+            <span className="chip absolute left-2 top-2 bg-stone-900/80 text-white ring-0">
+              Out of stock
+            </span>
+          )}
         </div>
       </Link>
       <div className="flex flex-1 flex-col p-3">
-        <span className="chip w-fit bg-brand-50 text-brand-700 ring-brand-100">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-stone-400">
           {CATEGORY_LABELS[product.category] || product.category}
-        </span>
-        <Link to={`/products/${product.id}`} className="mt-2">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-brand-900">
+        </p>
+        <Link to={`/products/${product.id}`} className="mt-1">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-stone-900">
             {product.title}
           </h3>
         </Link>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <Price cents={product.priceCents} className="font-bold text-brand-700" />
+        <div className="mt-1.5 flex items-center justify-between gap-2">
+          <Price cents={product.priceCents} className="font-bold text-stone-900" />
           {out ? (
-            <span className="text-xs font-semibold text-red-600">Out of stock</span>
-          ) : (
-            <span className="text-xs text-brand-700/60">
-              {product.stock <= 5 ? `Only ${product.stock} left` : 'In stock'}
+            <span className="text-xs font-medium text-stone-400">Out of stock</span>
+          ) : low ? (
+            <span className="chip bg-amber-50 text-amber-700 ring-amber-200">
+              Only {product.stock} left
             </span>
+          ) : (
+            <span className="text-xs text-stone-500">In stock</span>
           )}
         </div>
         <button
           type="button"
           onClick={onAdd}
           disabled={out || state.status === 'busy'}
-          className="btn-primary mt-3 w-full"
+          className={`mt-3 w-full ${out ? 'btn bg-stone-200 text-stone-500' : 'btn-primary'}`}
         >
           {out
             ? 'Out of stock'
