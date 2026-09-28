@@ -4,10 +4,13 @@ export default function ForbiddenPage() {
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-16 text-center">
       <div className="card p-10">
-        <p className="text-4xl" aria-hidden="true">
+        <span
+          aria-hidden="true"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-3xl"
+        >
           🔒
-        </p>
-        <h1 className="mt-3 text-2xl font-bold text-brand-700">Admins only</h1>
+        </span>
+        <h1 className="mt-4 text-2xl font-bold text-brand-700">Admins only</h1>
         <p className="mt-2 text-sm text-brand-700/70">
           This area is limited to store admins. If you believe you should have access, sign
           in with an admin account.

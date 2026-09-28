@@ -52,7 +52,10 @@ export default function AdminOrdersPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-brand-700">Manage orders</h1>
+      <h1 className="flex items-center gap-2 text-2xl font-bold text-brand-700">
+        Manage orders
+        <span className="chip bg-violet-100 text-violet-700 ring-violet-200">Admin</span>
+      </h1>
       <p className="mt-1 text-sm text-brand-700/70">
         Mark orders as packed or shipped, or cancel them (items return to stock).
       </p>
@@ -81,8 +84,8 @@ export default function AdminOrdersPage() {
             onClick={() => setFilter(f.value)}
             className={`chip ${
               filter === f.value
-                ? 'bg-brand-600 text-white ring-brand-600'
-                : 'bg-white text-brand-700 ring-brand-100 hover:bg-brand-50'
+                ? 'bg-brand-700 text-white ring-brand-700'
+                : 'bg-white text-brand-700 ring-brand-200 hover:bg-brand-50'
             }`}
           >
             {f.label}

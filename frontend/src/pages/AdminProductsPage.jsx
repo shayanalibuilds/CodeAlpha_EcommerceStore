@@ -168,7 +168,10 @@ export default function AdminProductsPage() {
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-brand-700">Manage products</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-brand-700">
+            Manage products
+            <span className="chip bg-violet-100 text-violet-700 ring-violet-200">Admin</span>
+          </h1>
           <p className="mt-1 text-sm text-brand-700/70">Create, edit, archive, and restore catalog items.</p>
         </div>
         {editing === null && (
