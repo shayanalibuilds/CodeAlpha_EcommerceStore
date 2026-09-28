@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useCart } from '../context/CartContext.jsx';
 
 function linkClass({ isActive }) {
   return `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
@@ -20,6 +21,7 @@ export function BagIcon({ className = 'h-5 w-5' }) {
 
 export default function Navbar() {
   const { user, ready, logout } = useAuth();
+  const { count } = useCart();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -51,10 +53,17 @@ export default function Navbar() {
   ));
 
   const cartLink = (
-    <NavLink to="/cart" className={linkClass} onClick={() => setOpen(false)}>
+    <NavLink to="/cart" className={linkClass} onClick={() => setOpen(false)} aria-label={`Cart, ${count} items`}>
       <span className="flex items-center gap-1.5">
-        <BagIcon className="h-4 w-4" />
-        Cart
+        <span className="relative">
+          <BagIcon className="h-4 w-4" />
+          {count > 0 && (
+            <span className="absolute -right-2 -top-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold text-white">
+              {count > 99 ? '99+' : count}
+            </span>
+          )}
+        </span>
+        <span className="hidden lg:inline">Cart</span>
       </span>
     </NavLink>
   );

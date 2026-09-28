@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProduct } from '../api/products.js';
 import { useApi } from '../hooks/useApi.js';
+import { useCart } from '../context/CartContext.jsx';
 import Price from '../components/Price.jsx';
+import QtyStepper from '../components/QtyStepper.jsx';
 import { PageLoader } from '../components/Spinner.jsx';
 import { CATEGORY_LABELS } from '../components/categories.js';
 
@@ -53,6 +56,7 @@ export default function ProductDetailPage() {
   }
 
   const product = data.product;
+  const out = product.stock === 0;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -83,8 +87,63 @@ export default function ProductDetailPage() {
           <Price cents={product.priceCents} className="mt-3 block text-3xl font-bold text-brand-700" />
           <StockLine stock={product.stock} />
           <p className="mt-4 leading-relaxed text-brand-900/80">{product.description}</p>
+
+          <AddToCart product={product} out={out} />
         </div>
       </div>
     </main>
+  );
+}
+
+function AddToCart({ product, out }) {
+  const { add } = useCart();
+  const [qty, setQty] = useState(1);
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState(null); // { type: 'added' | 'error', msg? }
+
+  const onAdd = async () => {
+    setBusy(true);
+    setFeedback(null);
+    try {
+      await add(product, qty);
+      setFeedback({ type: 'added' });
+      setTimeout(() => setFeedback(null), 2500);
+    } catch (err) {
+      setFeedback({ type: 'error', msg: err.fields?.qty || err.message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-6 border-t border-brand-50 pt-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <QtyStepper
+          qty={qty}
+          max={Math.min(product.stock, 99)}
+          disabled={out || busy}
+          onDecrement={() => setQty((q) => Math.max(1, q - 1))}
+          onIncrement={() => setQty((q) => Math.min(product.stock, 99, q + 1))}
+        />
+        <button
+          type="button"
+          onClick={onAdd}
+          disabled={out || busy}
+          className="btn-primary flex-1 sm:flex-none sm:px-10"
+        >
+          {out ? 'Out of stock' : busy ? 'Adding…' : 'Add to cart'}
+        </button>
+        {feedback?.type === 'added' && (
+          <span className="text-sm font-semibold text-emerald-600" role="status">
+            Added to cart ✓
+          </span>
+        )}
+      </div>
+      {feedback?.type === 'error' && (
+        <p className="mt-2 text-sm font-medium text-red-600" role="alert">
+          {feedback.msg}
+        </p>
+      )}
+    </div>
   );
 }
