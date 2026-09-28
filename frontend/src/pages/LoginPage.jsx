@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
+import AuthLayout from '../components/AuthLayout.jsx';
 
 const DEMO_ACCOUNTS = [
   { label: 'Customer demo', email: 'customer@example.com', password: 'password-customer-12' },
@@ -39,9 +40,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col px-4 py-10">
-      <h1 className="text-2xl font-bold text-brand-700">Sign in</h1>
-      <p className="mt-1 text-sm text-brand-700/70">
+    <AuthLayout>
+      <h1 className="text-2xl font-bold text-stone-900">Sign in</h1>
+      <p className="mt-1 text-sm text-stone-500">
         Welcome back. Your cart and orders are waiting.
       </p>
 
@@ -78,22 +79,22 @@ export default function LoginPage() {
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
 
-        <p className="mt-4 text-center text-sm text-brand-700/70">
+        <p className="mt-4 text-center text-sm text-stone-500">
           New here?{' '}
-          <Link to="/register" state={{ next }} className="font-semibold text-brand-600 underline">
+          <Link to="/register" state={{ next }} className="font-semibold text-brand-700 underline">
             Create an account
           </Link>
         </p>
       </form>
 
       <div className="card mt-4 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-700/60">
+        <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
           Demo accounts (seeded)
         </p>
         <div className="mt-2 flex flex-col gap-2">
           {DEMO_ACCOUNTS.map((acc) => (
             <div key={acc.email} className="flex items-center justify-between gap-2 text-xs">
-              <span className="text-brand-700/80">
+              <span className="text-stone-600">
                 <span className="font-semibold">{acc.label}:</span> {acc.email} / {acc.password}
               </span>
               <button
@@ -107,6 +108,6 @@ export default function LoginPage() {
           ))}
         </div>
       </div>
-    </main>
+    </AuthLayout>
   );
 }

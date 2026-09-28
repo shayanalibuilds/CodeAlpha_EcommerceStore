@@ -9,7 +9,7 @@ export function Spinner({ className = '' }) {
 
 export function PageLoader({ label = 'Loading…' }) {
   return (
-    <div className="flex min-h-[40vh] items-center justify-center gap-3 text-brand-700/70">
+    <div className="flex min-h-[40vh] items-center justify-center gap-3 text-stone-500">
       <Spinner />
       <span className="text-sm">{label}</span>
     </div>

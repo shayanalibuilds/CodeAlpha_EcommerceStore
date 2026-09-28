@@ -84,7 +84,9 @@ function ProductForm({ initial, onSaved, onCancel }) {
 
   return (
     <form onSubmit={onSubmit} className="card mb-6 p-5" noValidate>
-      <h2 className="font-semibold text-brand-700">{isEdit ? `Edit — ${initial.title}` : 'Add product'}</h2>
+      <h2 className="font-semibold text-stone-900">
+        {isEdit ? `Edit — ${initial.title}` : 'Add product'}
+      </h2>
       {error && (
         <div className="mt-3">
           <Alert>{error}</Alert>
@@ -126,7 +128,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
         <button type="submit" className="btn-primary" disabled={busy}>
           {busy ? 'Saving…' : isEdit ? 'Save changes' : 'Add product'}
         </button>
-        <button type="button" className="btn-secondary" onClick={onCancel}>
+        <button type="button" className="btn-ghost" onClick={onCancel}>
           Cancel
         </button>
       </div>
@@ -140,12 +142,18 @@ export default function AdminProductsPage() {
   const [rowBusy, setRowBusy] = useState(null);
   const [rowError, setRowError] = useState('');
   const [notice, setNotice] = useState('');
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const [status, setStatus] = useState('');
 
   // force refetch after mutations
   const [tick, setTick] = useState(0);
   const refresh = () => setTick((t) => t + 1);
 
-  const items = data?.items || [];
+  const items = (data?.items || [])
+    .filter((p) => !search || p.title.toLowerCase().includes(search.toLowerCase()))
+    .filter((p) => !category || p.category === category)
+    .filter((p) => !status || (status === 'archived' ? p.archived : !p.archived));
 
   const toggleArchive = async (product) => {
     setRowBusy(product.id);
@@ -168,11 +176,18 @@ export default function AdminProductsPage() {
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-brand-700">Manage products</h1>
-          <p className="mt-1 text-sm text-brand-700/70">Create, edit, archive, and restore catalog items.</p>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-stone-900">
+            Products
+            <span className="chip bg-violet-100 text-violet-700 ring-violet-200">Admin</span>
+          </h1>
+          <p className="mt-1 text-sm text-stone-500">Create, edit, archive, and restore catalog items.</p>
         </div>
         {editing === null && (
-          <button type="button" className="btn-primary" onClick={() => setEditing('new')}>
+          <button
+            type="button"
+            className="btn rounded-xl bg-violet-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-800 disabled:opacity-50"
+            onClick={() => setEditing('new')}
+          >
             Add product
           </button>
         )}
@@ -208,9 +223,43 @@ export default function AdminProductsPage() {
         </div>
       )}
 
+      <div className="mt-4 flex flex-wrap gap-2">
+        <input
+          type="search"
+          className="input !w-auto min-w-[12rem] flex-1"
+          placeholder="Search products…"
+          aria-label="Search products"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select
+          className="input !w-auto"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          aria-label="Filter by category"
+        >
+          <option value="">All categories</option>
+          {CATEGORY_KEYS.map((k) => (
+            <option key={k} value={k}>
+              {CATEGORY_LABELS[k]}
+            </option>
+          ))}
+        </select>
+        <select
+          className="input !w-auto"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label="Filter by status"
+        >
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
       <div className="card mt-4 overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="bg-brand-50 text-xs uppercase tracking-wide text-brand-700/70">
+          <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
             <tr>
               <th className="px-4 py-3 font-semibold">Product</th>
               <th className="px-4 py-3 font-semibold">Category</th>
@@ -220,24 +269,30 @@ export default function AdminProductsPage() {
               <th className="px-4 py-3 font-semibold text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-brand-50">
+          <tbody className="divide-y divide-stone-100">
             {items.map((p) => (
               <tr key={p.id} className={p.archived ? 'opacity-60' : ''}>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <img src={p.imageUrl || '/images/products/placeholder.svg'} alt="" className="h-10 w-10 rounded-md object-cover" />
-                    <Link to={`/products/${p.id}`} className="font-medium text-brand-900 hover:underline">
+                    <img src={p.imageUrl || '/images/products/placeholder.svg'} alt="" className="h-10 w-10 rounded-lg bg-stone-100 object-cover" />
+                    <Link to={`/products/${p.id}`} className="font-medium text-stone-900 hover:text-brand-700 hover:underline">
                       {p.title}
                     </Link>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-brand-700/80">{CATEGORY_LABELS[p.category] || p.category}</td>
                 <td className="px-4 py-3">
-                  <Price cents={p.priceCents} className="font-medium text-brand-900" />
+                  <span className="chip bg-stone-100 text-stone-600 ring-stone-200">
+                    {CATEGORY_LABELS[p.category] || p.category}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-brand-700/80">{p.stock}</td>
                 <td className="px-4 py-3">
-                  <span className={`chip ${p.archived ? 'bg-red-50 text-red-700 ring-red-200' : 'bg-emerald-50 text-emerald-700 ring-emerald-200'}`}>
+                  <Price cents={p.priceCents} className="font-medium text-stone-900" />
+                </td>
+                <td className={`px-4 py-3 ${p.stock <= 5 ? 'font-semibold text-amber-700' : 'text-stone-600'}`}>
+                  {p.stock}
+                </td>
+                <td className="px-4 py-3">
+                  <span className={`chip ${p.archived ? 'bg-stone-100 text-stone-500 ring-stone-200' : 'bg-emerald-50 text-emerald-700 ring-emerald-200'}`}>
                     {p.archived ? 'Archived' : 'Active'}
                   </span>
                 </td>
@@ -260,8 +315,8 @@ export default function AdminProductsPage() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan="6" className="px-4 py-10 text-center text-brand-700/60">
-                  No products yet — add the first one.
+                <td colSpan="6" className="px-4 py-10 text-center text-stone-500">
+                  No products match the current filters.
                 </td>
               </tr>
             )}
