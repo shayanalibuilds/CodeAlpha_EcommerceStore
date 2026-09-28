@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
+import BrandLogo from './BrandLogo.jsx';
 
 function linkClass({ isActive }) {
   return `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
@@ -58,7 +59,7 @@ export default function Navbar() {
         <span className="relative">
           <BagIcon className="h-4 w-4" />
           {count > 0 && (
-            <span className="absolute -right-2 -top-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold text-white">
+            <span className="absolute -right-2 -top-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-brand-700 px-1 text-[10px] font-bold text-white">
               {count > 99 ? '99+' : count}
             </span>
           )}
@@ -91,11 +92,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-brand-100 bg-white/95 backdrop-blur">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4" aria-label="Main navigation">
-        <Link to="/" className="flex items-center gap-2 font-bold text-brand-700" onClick={() => setOpen(false)}>
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm text-white" aria-hidden="true">
-            NM
-          </span>
-          <span>Northwind Market</span>
+        <Link to="/" className="flex items-center" aria-label="Northwind Market home" onClick={() => setOpen(false)}>
+          <BrandLogo className="h-9 w-auto" />
         </Link>
 
         {/* Desktop */}

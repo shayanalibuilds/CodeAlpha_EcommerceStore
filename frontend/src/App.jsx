@@ -70,9 +70,13 @@ export default function App() {
         </Routes>
       </div>
       <footer className="border-t border-brand-100 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-brand-700/60">
-          Northwind Market — a CodeAlpha Task 1 internship demo. Payments are mocked; no real
-          card is charged.
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-6 sm:flex-row sm:justify-between">
+          <img src="/brand/logo-mark.svg" alt="" aria-hidden="true" className="h-9 w-9" />
+          <p className="text-center text-xs text-brand-700/60">
+            Northwind Market — a CodeAlpha Task 1 internship demo. Payments are mocked; no real
+            card is charged.
+          </p>
+          <p className="text-xs text-brand-700/60">© 2026 Northwind Market</p>
         </div>
       </footer>
     </div>

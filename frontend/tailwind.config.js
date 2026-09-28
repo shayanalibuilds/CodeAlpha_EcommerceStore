@@ -4,13 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Brand palette = Tailwind emerald scale (design system: emerald-700 primary).
         brand: {
-          50: '#f5f7fa',
-          100: '#e6ebf2',
-          500: '#2c5282',
-          600: '#1f3d63',
-          700: '#152e4d',
-          900: '#0a1830',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
         },
       },
     },
