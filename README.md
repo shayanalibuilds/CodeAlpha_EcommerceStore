@@ -44,6 +44,8 @@ The catalog is intentionally family-safe: books, stationery, backpacks, headphon
 
 **Atlas:** create a free M0 cluster at <https://www.mongodb.com/atlas>, add a database user, allow your IP, and copy the connection string. It looks like `mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/northwind_market`.
 
+**Quick demo (no install):** from `backend/`, run `npm run mongo`. This starts an embedded in-memory MongoDB on `127.0.0.1:27017` (the binary downloads once, then is cached). Data is ephemeral — ideal for demos, but re-seed after every restart. The default `MONGO_URI` in `.env.example` already points at it.
+
 > The Mongo URI stays in your local `.env` only — never commit it.
 
 ### 3.3 Install and run

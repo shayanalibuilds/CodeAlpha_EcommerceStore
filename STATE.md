@@ -1,10 +1,10 @@
-status: IN_PROGRESS
-scaffold_sha:
-open_prs:
-next_pr:
-blocked_on:
-pages_verified:
-api_curl: pending
-last_backend_test: pending
-last_frontend_build: pending
-notes: scaffolding monorepo on main; feature work moves to feat/task-1-store.
+status: COMPLETE
+scaffold_sha: 37b20b088abfc316398ab5f957716b021bdb73af
+open_prs: feat/task-1-store -> main (Task 1 store) — awaiting human merge
+next_pr: none (Task 1 scope closed; Task 2 would start from a new feat/* branch)
+blocked_on: none
+pages_verified: / (guest catalog: search + category chips + sort + product grid), /products/:id (details, stock, add to cart), /cart (line items, qty steppers, remove, subtotal, empty state), /checkout (guest -> redirect /login; address form + card/UPI/cash mock radios + per-field validation errors + place order), /orders (list with statuses), /orders/:id (receipt with items/total/address/payment), /login (sign in + seeded demo accounts), /register (signup + auto sign-in, min-8 password message), /admin/products (customer blocked -> /forbidden; admin create/edit/archive/restore), /admin/orders (admin list all, filter, mark packed/shipped, cancel), narrow-width (375px: nav collapses to hamburger, Add to cart stays visible on cards). Verified with a real browser walk + live curl E2E.
+api_curl: pass (health, product list contains titles, login, cart add, checkout, stock 12 -> 10, cart emptied after order, admin mark packed, customer POST /api/products -> 403, no-token /api/cart -> 401, foreign order -> 404, register role=admin -> role stays customer)
+last_backend_test: 2026-09-28 — 56/56 passed (auth, products, cart, orders, admin; jest + supertest + mongodb-memory-server 7.0.14)
+last_frontend_build: 2026-09-28 — vite build ok (219.80 kB js / 22.45 kB css)
+notes: Slices 1-5 committed on feat/task-1-store as test -> feat -> ui groups. Stack: MERN (MongoDB+Mongoose, Express, React 18 + Vite 5, Tailwind 3), JWT + bcryptjs, zod validation middleware. Money as integer cents, USD only. No real payment SDK; no pricing page. Payments are mocked. Catalog family-safe: 15 products / 5 categories seeded (books, stationery, bags, audio, desk & drinkware). Admin is seed-only. Host note: no system mongod on Debian 13 — tests use mongodb-memory-server (MONGOMS_VERSION=7.0.14, set by test helper); quick demo DB via `npm run mongo` (embedded, ephemeral). Live-stack demo verified: npm run mongo -> npm run seed -> npm run start -> frontend npm run dev.
