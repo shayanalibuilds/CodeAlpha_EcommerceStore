@@ -25,13 +25,18 @@ export default function ProductCard({ product }) {
   return (
     <div className="card flex flex-col transition-shadow hover:shadow-md">
       <Link to={`/products/${product.id}`} className="group block" aria-label={product.title}>
-        <div className="aspect-[4/3] overflow-hidden bg-brand-50">
+        <div className="relative aspect-[4/3] overflow-hidden bg-brand-50">
           <img
             src={product.imageUrl || '/images/products/placeholder.svg'}
             alt={product.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]"
+            className={`h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03] ${
+              out ? 'opacity-70' : ''
+            }`}
           />
+          {out && (
+            <span className="absolute left-2 top-2 chip bg-stone-900/80 text-white ring-0">Out of stock</span>
+          )}
         </div>
       </Link>
       <div className="flex flex-1 flex-col p-3">
@@ -46,18 +51,20 @@ export default function ProductCard({ product }) {
         <div className="mt-1 flex items-center justify-between gap-2">
           <Price cents={product.priceCents} className="font-bold text-brand-700" />
           {out ? (
-            <span className="text-xs font-semibold text-red-600">Out of stock</span>
-          ) : (
-            <span className="text-xs text-brand-700/60">
-              {product.stock <= 5 ? `Only ${product.stock} left` : 'In stock'}
+            <span className="chip bg-stone-100 text-stone-600 ring-stone-200">Out of stock</span>
+          ) : product.stock <= 5 ? (
+            <span className="chip bg-amber-50 text-amber-700 ring-amber-200">
+              Only {product.stock} left
             </span>
+          ) : (
+            <span className="text-xs text-brand-700/60">In stock</span>
           )}
         </div>
         <button
           type="button"
           onClick={onAdd}
           disabled={out || state.status === 'busy'}
-          className="btn-primary mt-3 w-full"
+          className={`mt-3 w-full ${out ? 'btn bg-stone-200 text-stone-500' : 'btn-primary'}`}
         >
           {out
             ? 'Out of stock'

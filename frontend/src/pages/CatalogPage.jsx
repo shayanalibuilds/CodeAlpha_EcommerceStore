@@ -51,9 +51,9 @@ export default function CatalogPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <section className="rounded-xl bg-brand-600 px-6 py-8 text-white shadow-sm sm:px-10">
+      <section className="rounded-2xl bg-brand-700 px-6 py-8 text-white shadow-sm sm:px-10">
         <h1 className="text-2xl font-bold sm:text-3xl">Everything for your study desk</h1>
-        <p className="mt-2 max-w-xl text-sm text-white/80">
+        <p className="mt-2 max-w-xl text-sm text-white/85">
           Books, stationery, bags, audio and desk picks chosen for curious minds. Family-safe,
           student-friendly prices.
         </p>
@@ -101,8 +101,8 @@ export default function CatalogPage() {
           onClick={() => setParam('category', '')}
           className={`chip ${
             !category
-              ? 'bg-brand-600 text-white ring-brand-600'
-              : 'bg-white text-brand-700 ring-brand-100 hover:bg-brand-50'
+              ? 'bg-brand-700 text-white ring-brand-700'
+              : 'bg-white text-brand-700 ring-brand-200 hover:bg-brand-50'
           }`}
         >
           All
@@ -114,8 +114,8 @@ export default function CatalogPage() {
             onClick={() => setParam('category', category === key ? '' : key)}
             className={`chip ${
               category === key
-                ? 'bg-brand-600 text-white ring-brand-600'
-                : 'bg-white text-brand-700 ring-brand-100 hover:bg-brand-50'
+                ? 'bg-brand-700 text-white ring-brand-700'
+                : 'bg-white text-brand-700 ring-brand-200 hover:bg-brand-50'
             }`}
           >
             {label}

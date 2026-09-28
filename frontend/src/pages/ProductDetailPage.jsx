@@ -89,6 +89,21 @@ export default function ProductDetailPage() {
           <p className="mt-4 leading-relaxed text-brand-900/80">{product.description}</p>
 
           <AddToCart product={product} out={out} />
+
+          <ul className="mt-6 space-y-2 border-t border-brand-50 pt-4 text-sm text-brand-700/80">
+            <li className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Demo checkout — payments are mocked, no real card is charged
+            </li>
+            <li className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Stock shown here is live from the store database
+            </li>
+          </ul>
         </div>
       </div>
     </main>
