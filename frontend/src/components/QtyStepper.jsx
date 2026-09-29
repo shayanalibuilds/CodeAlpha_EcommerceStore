@@ -7,18 +7,18 @@ export default function QtyStepper({
   disabled = false,
 }) {
   return (
-    <div className="inline-flex items-center rounded-md bg-white ring-1 ring-brand-100">
+    <div className="inline-flex items-stretch border border-border-grid bg-white">
       <button
         type="button"
         aria-label="Decrease quantity"
-        className="px-2.5 py-1.5 text-lg leading-none text-brand-700 hover:bg-brand-50 disabled:opacity-40"
+        className="flex h-12 w-11 items-center justify-center text-lg font-medium text-on-surface transition-colors hover:bg-surface-container-low disabled:opacity-30"
         onClick={onDecrement}
         disabled={disabled || qty <= min}
       >
         −
       </button>
       <span
-        className="min-w-[2.25rem] text-center text-sm font-semibold text-brand-900"
+        className="flex w-11 items-center justify-center border-x border-border-grid font-headline-sm text-headline-sm font-semibold text-on-surface"
         aria-label={`Quantity: ${qty}`}
       >
         {qty}
@@ -26,7 +26,7 @@ export default function QtyStepper({
       <button
         type="button"
         aria-label="Increase quantity"
-        className="px-2.5 py-1.5 text-lg leading-none text-brand-700 hover:bg-brand-50 disabled:opacity-40"
+        className="flex h-12 w-11 items-center justify-center text-lg font-medium text-on-surface transition-colors hover:bg-surface-container-low disabled:opacity-30"
         onClick={onIncrement}
         disabled={disabled || qty >= max}
       >

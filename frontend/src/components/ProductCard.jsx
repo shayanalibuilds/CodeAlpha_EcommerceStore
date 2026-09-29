@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Price from './Price.jsx';
 import { CATEGORY_LABELS } from './categories.js';
 import { useCart } from '../context/CartContext.jsx';
+import Icon from './Icon.jsx';
 
 export default function ProductCard({ product }) {
   const { add } = useCart();
@@ -21,58 +22,104 @@ export default function ProductCard({ product }) {
   };
 
   const out = product.stock === 0;
+  const low = !out && product.stock <= 5;
 
   return (
-    <div className="card flex flex-col transition-shadow hover:shadow-md">
-      <Link to={`/products/${product.id}`} className="group block" aria-label={product.title}>
-        <div className="aspect-[4/3] overflow-hidden bg-brand-50">
-          <img
-            src={product.imageUrl || '/images/products/placeholder.svg'}
-            alt={product.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]"
-          />
-        </div>
-      </Link>
-      <div className="flex flex-1 flex-col p-3">
-        <span className="chip w-fit bg-brand-50 text-brand-700 ring-brand-100">
-          {CATEGORY_LABELS[product.category] || product.category}
-        </span>
-        <Link to={`/products/${product.id}`} className="mt-2">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-brand-900">
-            {product.title}
-          </h3>
-        </Link>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <Price cents={product.priceCents} className="font-bold text-brand-700" />
-          {out ? (
-            <span className="text-xs font-semibold text-red-600">Out of stock</span>
-          ) : (
-            <span className="text-xs text-brand-700/60">
-              {product.stock <= 5 ? `Only ${product.stock} left` : 'In stock'}
+    <article
+      className={`group flex flex-col justify-between border border-border-grid bg-white p-space-md transition-colors duration-200 hover:border-border-strong ${
+        out ? 'opacity-80' : ''
+      }`}
+    >
+      <div>
+        {/* Recessed image well */}
+        <Link to={`/products/${product.id}`} className="block" aria-label={product.title}>
+          <div className="relative mb-space-md flex aspect-[4/3] w-full items-center justify-center overflow-hidden border border-border-grid bg-surface-container-low">
+            <img
+              src={product.imageUrl || '/images/products/placeholder.svg'}
+              alt={product.title}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+            {/* Category tag */}
+            <span className="absolute left-2 top-2 z-10 border border-border-grid bg-white px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-on-surface">
+              {CATEGORY_LABELS[product.category] || product.category}
             </span>
-          )}
+            {/* Stock jewels */}
+            {out ? (
+              <span className="absolute right-2 top-2 z-10 flex items-center gap-1.5 border border-border-grid bg-surface-container-highest px-2 py-0.5 font-label-sm uppercase tracking-wider text-secondary">
+                <span className="h-1.5 w-1.5 bg-secondary" aria-hidden="true" />
+                Archived / Sold Out
+              </span>
+            ) : low ? (
+              <span className="absolute right-2 top-2 z-10 flex items-center gap-1.5 border border-border-grid bg-white px-2 py-0.5 font-label-sm text-error">
+                <span className="h-1.5 w-1.5 bg-error" aria-hidden="true" />
+                <span className="font-semibold">Only {product.stock} Left</span>
+              </span>
+            ) : (
+              <span className="absolute right-2 top-2 z-10 flex items-center gap-1.5 border border-border-grid bg-white px-2 py-0.5 font-label-sm uppercase text-on-surface-variant">
+                <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
+                In Stock
+              </span>
+            )}
+          </div>
+        </Link>
+
+        {/* Meta tray */}
+        <div className="mb-space-xs flex items-start justify-between gap-space-sm">
+          <div className="min-w-0">
+            <h3 className="mt-0.5 font-headline-sm text-headline-sm tracking-tight text-on-surface">
+              <Link to={`/products/${product.id}`} className="hover:text-accent-pine">
+                {product.title}
+              </Link>
+            </h3>
+          </div>
+          <div className="shrink-0 text-right">
+            <Price cents={product.priceCents} className="font-headline-sm font-semibold tracking-tight text-on-surface" />
+            <span className="block font-label-sm text-label-sm text-outline">USD</span>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={onAdd}
-          disabled={out || state.status === 'busy'}
-          className="btn-primary mt-3 w-full"
-        >
-          {out
-            ? 'Out of stock'
-            : state.status === 'busy'
-              ? 'Adding…'
-              : state.status === 'added'
-                ? 'Added ✓'
-                : 'Add to cart'}
-        </button>
-        {state.status === 'error' && (
-          <p className="mt-1 text-xs font-medium text-red-600" role="alert">
-            {state.message}
-          </p>
-        )}
+        <p className="mb-space-md line-clamp-2 font-body-sm leading-relaxed text-on-surface-variant">
+          {product.description}
+        </p>
       </div>
-    </div>
+
+      {/* Purchase row */}
+      <div className="flex items-center gap-2 border-t border-border-grid pt-space-sm">
+        {out ? (
+          <button
+            type="button"
+            disabled
+            className="flex flex-1 cursor-not-allowed items-center justify-center gap-2 border border-border-grid bg-surface-container-low px-space-md py-2.5 font-label-md uppercase tracking-wider text-outline"
+          >
+            <Icon name="block" className="text-base" />
+            <span>Sold Out</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onAdd}
+            disabled={state.status === 'busy'}
+            className="flex flex-1 items-center justify-center gap-2 bg-accent-pine px-space-md py-2.5 font-label-md uppercase tracking-wider text-white transition-colors duration-150 hover:bg-accent-pine-hover disabled:opacity-50"
+          >
+            <Icon name="shopping_bag" className="text-base" />
+            <span>{state.status === 'busy' ? 'Adding…' : state.status === 'added' ? 'Added ✓' : 'Add to bag'}</span>
+          </button>
+        )}
+        <Link
+          to={`/products/${product.id}`}
+          aria-label={`View ${product.title}`}
+          className={`border border-border-grid p-2.5 transition-colors ${
+            out ? 'pointer-events-none text-outline' : 'text-on-surface-variant hover:border-border-strong hover:text-on-surface'
+          }`}
+        >
+          <Icon name="arrow_outward" className="text-base" />
+        </Link>
+      </div>
+      {state.status === 'error' && (
+        <p className="mt-1 font-label-md uppercase tracking-wider text-error" role="alert">
+          {state.message}
+        </p>
+      )}
+    </article>
   );
 }
