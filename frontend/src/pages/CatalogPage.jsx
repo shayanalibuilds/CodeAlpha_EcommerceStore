@@ -48,6 +48,10 @@ export default function CatalogPage() {
   );
 
   const items = data?.items || [];
+  // Whole-catalog size from the server — the "All Pieces" counter and the
+  // repertoire pill describe the entire shop and must not shrink when a
+  // search or category filter narrows the grid below.
+  const total = data?.total ?? items.length;
   const hasFilters = Boolean(q || category);
 
   return (
@@ -92,7 +96,7 @@ export default function CatalogPage() {
             <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
               <span className="font-label-md text-on-surface-variant">CATALOG REPERTOIRE:</span>
               <span className="font-label-md font-semibold text-accent-pine">
-                {loading ? '—' : items.length} / ITEMS AVAILABLE
+                {loading ? '—' : total} / ITEMS AVAILABLE
               </span>
             </div>
             {/* Sort */}
@@ -125,7 +129,7 @@ export default function CatalogPage() {
             }`}
           >
             <span>All Pieces</span>
-            <span className="font-label-sm text-label-sm opacity-60">({items.length})</span>
+            <span className="font-label-sm text-label-sm opacity-60">({loading ? '—' : total})</span>
           </button>
           {CHIPS.map(([key, label]) => (
             <button
