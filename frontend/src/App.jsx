@@ -1,5 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
+import MobileTabBar from './components/MobileTabBar.jsx';
+import LandingPage from './pages/LandingPage.jsx';
 import CatalogPage from './pages/CatalogPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import CartPage from './pages/CartPage.jsx';
@@ -15,12 +18,29 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import { RequireAuth, RequireAdmin } from './components/ProtectedRoute.jsx';
 
 export default function App() {
+  const { pathname } = useLocation();
+
+  // Auth gateway pages render standalone (no global chrome) — see AuthLayout.
+  const isAuthPage = pathname === '/login' || pathname === '/register';
+  // Admin pages carry their own operations-console sidebar & top bar.
+  const isAdminPage = pathname.startsWith('/admin');
+
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <div className="flex-1">
+      {!isAdminPage && <Navbar />}
+      <div className={`flex-1 ${isAdminPage ? '' : 'pb-16 md:pb-0'}`}>
         <Routes>
-          <Route path="/" element={<CatalogPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/products" element={<CatalogPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route
@@ -47,8 +67,6 @@ export default function App() {
               </RequireAuth>
             }
           />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
           <Route
             path="/admin/products"
@@ -69,12 +87,8 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
-      <footer className="border-t border-brand-100 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-brand-700/60">
-          Northwind Market — a CodeAlpha Task 1 internship demo. Payments are mocked; no real
-          card is charged.
-        </div>
-      </footer>
+      {!isAdminPage && <Footer />}
+      {!isAdminPage && <MobileTabBar />}
     </div>
   );
 }

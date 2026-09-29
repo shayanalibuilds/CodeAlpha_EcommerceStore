@@ -2,8 +2,8 @@
  * Northwind Market — "Minimalist / Architectural" design system.
  *
  * Token names mirror the designer mockups 1:1 (primary/accent-pine, on-surface,
- * border-grid, surface-container-*, headline-*/body-*/label-*, space-*, margin)
- * so ported markup needs no translation. Storefront uses zero radius + 1px
+ * border-grid, surface-container scale, the headline/body/label type scale,
+ * and the space/margin spacing scale) so ported markup needs no translation. Storefront uses zero radius + 1px
  * hairline borders; the scale below also allows the subtle admin rounding.
  */
 
