@@ -122,7 +122,7 @@ export default function CatalogPage() {
           <button
             type="button"
             onClick={() => setParam('category', '')}
-            className={`-mb-px flex items-center gap-2 border-b-2 px-6 py-2.5 font-label-md transition-colors ${
+            className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-6 py-2.5 font-label-md transition-colors ${
               !category
                 ? 'border-border-strong bg-text-primary text-white'
                 : 'border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
