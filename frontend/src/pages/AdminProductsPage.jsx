@@ -215,17 +215,16 @@ function StatusChip({ archived }) {
 }
 
 export default function AdminProductsPage() {
-  const { data, loading, error, retry } = useApi(() => listProducts({ includeArchived: '1' }), []);
+  // force refetch after mutations
+  const [tick, setTick] = useState(0);
+  const refresh = () => setTick((t) => t + 1);
+  const { data, loading, error, retry } = useApi(() => listProducts({ includeArchived: '1' }), [tick]);
   const [editing, setEditing] = useState(null); // null | 'new' | product
   const [confirming, setConfirming] = useState(null); // { product, mode }
   const [rowBusy, setRowBusy] = useState(null);
   const [rowError, setRowError] = useState('');
   const [notice, setNotice] = useState('');
   const [query, setQuery] = useState('');
-
-  // force refetch after mutations
-  const [tick, setTick] = useState(0);
-  const refresh = () => setTick((t) => t + 1);
 
   const items = data?.items || [];
 

@@ -26,15 +26,14 @@ const FILTERS = [
 ];
 
 export default function AdminOrdersPage() {
-  const { data, loading, error, retry } = useApi(() => listOrders('all'), []);
+  const [tick, setTick] = useState(0);
+  const refresh = () => setTick((t) => t + 1);
+  const { data, loading, error, retry } = useApi(() => listOrders('all'), [tick]);
   const [filter, setFilter] = useState('');
   const [busyId, setBusyId] = useState(null);
   const [rowError, setRowError] = useState('');
   const [notice, setNotice] = useState('');
   const [query, setQuery] = useState('');
-
-  const [tick, setTick] = useState(0);
-  const refresh = () => setTick((t) => t + 1);
 
   const all = data?.orders || [];
   const counts = useMemo(() => {

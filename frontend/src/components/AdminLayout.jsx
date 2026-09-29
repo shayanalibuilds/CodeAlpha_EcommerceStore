@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Icon from './Icon.jsx';
 
@@ -27,7 +27,8 @@ const NAV_SECTIONS = [
 ];
 
 export default function AdminLayout({ section = 'Console', children }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const initials = user?.name
@@ -44,9 +45,8 @@ export default function AdminLayout({ section = 'Console', children }) {
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 z-40 hidden h-full w-64 flex-col border-r border-border-grid bg-surface-pure md:flex">
         <div className="flex h-16 items-center justify-between border-b border-border-grid px-space-md">
-          <Link to="/" className="flex items-center gap-space-sm">
-            <img src="/brand/logo-compact.svg" alt="Northwind Market" className="h-7 w-auto object-contain" />
-            <span className="font-label-lg uppercase tracking-wider text-text-primary">Northwind</span>
+          <Link to="/" className="flex items-center" aria-label="Northwind Market — storefront">
+            <img src="/brand/logo-compact.svg" alt="Northwind Market" className="h-6 w-auto object-contain" />
           </Link>
           <span className="border border-border-grid px-space-xs py-0.5 font-label-sm text-text-muted">OPS</span>
         </div>
@@ -126,6 +126,17 @@ export default function AdminLayout({ section = 'Console', children }) {
                 <span className="font-label-sm uppercase leading-tight text-text-muted">{user?.role || 'Operator'}</span>
               </span>
             </span>
+            <button
+              type="button"
+              onClick={async () => {
+                await logout();
+                navigate('/');
+              }}
+              className="flex items-center gap-1.5 border border-border-grid px-2.5 py-1.5 font-label-sm uppercase tracking-wider text-text-muted transition-colors hover:border-border-strong hover:text-text-primary"
+            >
+              <Icon name="logout" className="text-[16px]" />
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
           </div>
         </header>
 
