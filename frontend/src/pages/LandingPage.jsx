@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listProducts } from '../api/products.js';
 import { useApi } from '../hooks/useApi.js';
@@ -23,12 +24,28 @@ export default function LandingPage() {
   const items = data?.items || [];
   const { lead, rest } = pickShowcase(items);
   const curated = rest.slice(0, 4);
+  // Per-product quick-add feedback: { [productId]: { status: 'busy'|'added'|'error', message? } }
+  const [flash, setFlash] = useState({});
 
   const quickAdd = async (product) => {
+    if (flash[product.id]?.status === 'busy') return;
+    setFlash((f) => ({ ...f, [product.id]: { status: 'busy' } }));
     try {
       await add(product, 1);
-    } catch {
-      /* card surfaces its own error state */
+      setFlash((f) => ({ ...f, [product.id]: { status: 'added' } }));
+      setTimeout(
+        () => setFlash((f) => (f[product.id]?.status === 'added' ? { ...f, [product.id]: null } : f)),
+        1800
+      );
+    } catch (err) {
+      setFlash((f) => ({
+        ...f,
+        [product.id]: { status: 'error', message: err.fields?.qty || err.message },
+      }));
+      setTimeout(
+        () => setFlash((f) => (f[product.id]?.status === 'error' ? { ...f, [product.id]: null } : f)),
+        4000
+      );
     }
   };
 
@@ -170,19 +187,31 @@ export default function LandingPage() {
                         </div>
                         <p className="mb-4 text-xs leading-relaxed text-text-muted line-clamp-2">{p.description}</p>
                       </div>
-                      <div className="flex items-center justify-between border-t border-border-grid pt-4">
-                        <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
-                          {CATEGORY_LABELS[p.category] || p.category}
-                        </span>
-                        <button
-                          type="button"
-                          aria-label={`Add ${p.title}`}
-                          onClick={() => quickAdd(p)}
-                          disabled={p.stock === 0}
-                          className="flex h-8 w-8 items-center justify-center border border-border-grid bg-white text-text-primary transition-colors hover:border-border-strong hover:bg-text-primary hover:text-white disabled:opacity-40"
-                        >
-                          <Icon name="add" className="text-sm" />
-                        </button>
+                      <div className="border-t border-border-grid pt-4">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
+                            {CATEGORY_LABELS[p.category] || p.category}
+                          </span>
+                          <button
+                            type="button"
+                            aria-label={`Add ${p.title}`}
+                            onClick={() => quickAdd(p)}
+                            disabled={p.stock === 0 || flash[p.id]?.status === 'busy'}
+                            className={`flex h-8 w-8 items-center justify-center border border-border-grid bg-white transition-colors hover:border-border-strong hover:bg-text-primary hover:text-white disabled:opacity-40 ${
+                              flash[p.id]?.status === 'error' ? 'border-error text-error' : 'text-text-primary'
+                            } ${flash[p.id]?.status === 'added' ? '!border-accent-pine !text-accent-pine' : ''}`}
+                          >
+                            <Icon
+                              name={flash[p.id]?.status === 'added' ? 'check' : flash[p.id]?.status === 'error' ? 'error' : 'add'}
+                              className="text-sm"
+                            />
+                          </button>
+                        </div>
+                        {flash[p.id]?.status === 'error' && (
+                          <p role="alert" className="mt-2 text-right text-[11px] font-medium uppercase tracking-wide text-error">
+                            {flash[p.id].message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -311,16 +340,39 @@ export default function LandingPage() {
                 </h3>
                 <p className="mb-6 line-clamp-1 text-xs text-text-muted">{p.description}</p>
               </div>
-              <div className="flex items-center justify-between border-t border-border-grid pt-4">
-                <Price cents={p.priceCents} className="font-mono text-base font-bold text-text-primary" />
-                <button
-                  type="button"
-                  onClick={() => (p.stock === 0 ? navigate(`/products/${p.id}`) : quickAdd(p))}
-                  className="inline-flex items-center gap-1.5 bg-text-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-accent-pine"
-                >
-                  <Icon name="add" className="text-sm" />
-                  <span>{p.stock === 0 ? 'View' : 'Quick Add'}</span>
-                </button>
+              <div className="border-t border-border-grid pt-4">
+                <div className="flex items-center justify-between">
+                  <Price cents={p.priceCents} className="font-mono text-base font-bold text-text-primary" />
+                  <button
+                    type="button"
+                    onClick={() => (p.stock === 0 ? navigate(`/products/${p.id}`) : quickAdd(p))}
+                    disabled={p.stock > 0 && flash[p.id]?.status === 'busy'}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                      p.stock === 0
+                        ? 'border border-border-grid bg-white text-text-primary hover:border-border-strong'
+                        : 'bg-text-primary text-white hover:bg-accent-pine'
+                    } ${flash[p.id]?.status === 'added' ? '!bg-accent-pine' : ''}`}
+                  >
+                    <Icon
+                      name={flash[p.id]?.status === 'added' ? 'check' : flash[p.id]?.status === 'error' ? 'error' : 'add'}
+                      className="text-sm"
+                    />
+                    <span>
+                      {p.stock === 0
+                        ? 'View'
+                        : flash[p.id]?.status === 'added'
+                          ? 'Added'
+                          : flash[p.id]?.status === 'busy'
+                            ? '…'
+                            : 'Quick Add'}
+                    </span>
+                  </button>
+                </div>
+                {flash[p.id]?.status === 'error' && (
+                  <p role="alert" className="mt-2 text-right text-[11px] font-medium uppercase tracking-wide text-error">
+                    {flash[p.id].message}
+                  </p>
+                )}
               </div>
             </div>
           ))}
