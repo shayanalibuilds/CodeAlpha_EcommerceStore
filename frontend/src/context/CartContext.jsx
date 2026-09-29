@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getCart, addCartItem, updateCartItem, removeCartItem } from '../api/cart.js';
+import { getProduct } from '../api/products.js';
 import { useAuth } from './AuthContext.jsx';
 
 const CartContext = createContext(null);
@@ -68,6 +69,31 @@ function stockLimitError(title, stock) {
   return err;
 }
 
+// The cart could not confirm live stock (API hiccup, offline, malformed
+// payload). Fail-closed: refuse the write rather than risk overselling.
+function stockUnverifiedError(title) {
+  const err = new Error(
+    `Couldn't verify the stock for "${title}" — please try again in a moment.`
+  );
+  err.fields = { qty: err.message };
+  return err;
+}
+
+// Live stock straight from the catalog. A 404 means the product is gone or
+// archived — reported as sold out; any other failure means we genuinely
+// cannot verify, which must block the write instead of guessing.
+async function liveStockOrThrow(productId, title) {
+  try {
+    const data = await getProduct(productId);
+    const stock = data?.product?.stock;
+    if (!Number.isFinite(stock)) throw new Error('Malformed product payload.');
+    return stock;
+  } catch (err) {
+    if (err?.status === 404) return 0;
+    throw stockUnverifiedError(title);
+  }
+}
+
 export function CartProvider({ children }) {
   const { user, ready } = useAuth();
   const [items, setItems] = useState([]);
@@ -120,24 +146,38 @@ export function CartProvider({ children }) {
     setItems(next);
   }, []);
 
-  // Optimistic add: validate against stock FIRST, bump the UI immediately,
-  // then reconcile with the server. State is never mutated in place — a
-  // rejected write must roll back to the exact previous quantities.
+  // THE single gate every add-to-cart button goes through — product cards,
+  // landing quick-adds, PDP "Add to cart" / "Buy now", and anything added in
+  // the future. No caller can push a line past the shelf:
+  //   - stock is resolved from the freshest source available;
+  //   - guests have no server-side guard, so EVERY guest add is verified
+  //     against live catalog stock first (also self-heals stale snapshots);
+  //   - signed-in adds pre-check against a known snapshot when available
+  //     (the server authoritatively re-validates the real write, 409 → resync)
+  //     and fetch live stock when the snapshot is missing;
+  //   - unknown or unverifiable stock fails closed.
+  // Never call the cart API directly from a button — route it through here.
   const add = useCallback(
     async (product, qty = 1) => {
       const prev = itemsRef.current;
       const existing = prev.find((i) => i.productId === product.id);
-      const stock = Number.isFinite(product.stock) ? product.stock : existing?.stock;
       const title = product.title || existing?.title || 'This item';
+
+      let stock = Number.isFinite(product.stock) ? product.stock : existing?.stock;
+      if (!user || !Number.isFinite(stock)) {
+        stock = await liveStockOrThrow(product.id, title);
+      }
 
       const targetQty = (existing?.qty || 0) + qty;
       if (!stock || stock <= 0 || targetQty > maxQtyFor(stock)) {
         throw stockLimitError(title, stock || 0);
       }
 
+      // Carry the freshest known stock onto the line so later UI caps and
+      // notices describe the shelf as it is right now.
       const next = existing
-        ? prev.map((i) => (i.productId === product.id ? { ...i, qty: targetQty } : i))
-        : [...prev, fromProduct(product, qty)];
+        ? prev.map((i) => (i.productId === product.id ? { ...i, qty: targetQty, stock } : i))
+        : [...prev, { ...fromProduct(product, qty), stock }];
 
       if (user) {
         setItems(next);
@@ -168,19 +208,31 @@ export function CartProvider({ children }) {
     [user, persistGuest]
   );
 
+  // Same gate for quantity changes. Raising a line can never pass live stock
+  // (fetched fresh when the line's snapshot is missing/stale); lowering is
+  // always allowed — a shrinking shelf must never trap items in the bag.
   const updateQty = useCallback(
     async (productId, qty) => {
       const prev = itemsRef.current;
       const item = prev.find((i) => i.productId === productId);
       if (!item) return;
 
-      if (qty > maxQtyFor(item.stock)) {
-        throw stockLimitError(item.title, item.stock || 0);
+      const raising = qty > (item.qty || 0);
+      let stock = item.stock;
+      if (raising && !Number.isFinite(stock)) {
+        stock = await liveStockOrThrow(productId, item.title);
+      }
+      if (raising && qty > maxQtyFor(stock)) {
+        throw stockLimitError(item.title, Number.isFinite(stock) ? stock : 0);
       }
 
+      const patchLine = (i) =>
+        i.productId === productId
+          ? { ...i, qty, ...(Number.isFinite(stock) ? { stock } : {}) }
+          : i;
+
       if (user) {
-        const next = prev.map((i) => (i.productId === productId ? { ...i, qty } : i));
-        setItems(next);
+        setItems(prev.map(patchLine));
         try {
           const data = await updateCartItem(productId, qty);
           setItems(data.cart.items.map(normalize));
@@ -200,7 +252,7 @@ export function CartProvider({ children }) {
         return;
       }
 
-      persistGuest(prev.map((i) => (i.productId === productId ? { ...i, qty } : i)));
+      persistGuest(prev.map(patchLine));
     },
     [user, persistGuest]
   );
