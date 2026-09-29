@@ -50,6 +50,24 @@ function fromProduct(product, qty) {
   };
 }
 
+// Stock ceiling for a cart line, capped at MAX_QTY. Unknown/absent stock
+// counts as zero — the bag never offers more than the shelf can fulfill.
+// (The server re-validates every write for signed-in users.)
+function maxQtyFor(stock) {
+  return Math.min(Number.isFinite(stock) ? stock : 0, MAX_QTY);
+}
+
+// Friendly, field-mapped error for stock-limited cart writes.
+function stockLimitError(title, stock) {
+  const err = new Error(
+    stock > 0
+      ? `Only ${stock} left of "${title}". Lower the quantity to continue.`
+      : `Sorry, "${title}" is out of stock right now.`
+  );
+  err.fields = { qty: err.message };
+  return err;
+}
+
 export function CartProvider({ children }) {
   const { user, ready } = useAuth();
   const [items, setItems] = useState([]);
@@ -102,45 +120,49 @@ export function CartProvider({ children }) {
     setItems(next);
   }, []);
 
-  // Optimistic add: bump the UI immediately, reconcile with the server after.
+  // Optimistic add: validate against stock FIRST, bump the UI immediately,
+  // then reconcile with the server. State is never mutated in place — a
+  // rejected write must roll back to the exact previous quantities.
   const add = useCallback(
     async (product, qty = 1) => {
       const prev = itemsRef.current;
+      const existing = prev.find((i) => i.productId === product.id);
+      const stock = Number.isFinite(product.stock) ? product.stock : existing?.stock;
+      const title = product.title || existing?.title || 'This item';
 
-      if (product.stock === 0) {
-        throw new Error(`Sorry, "${product.title}" is out of stock right now.`);
+      const targetQty = (existing?.qty || 0) + qty;
+      if (!stock || stock <= 0 || targetQty > maxQtyFor(stock)) {
+        throw stockLimitError(title, stock || 0);
       }
 
+      const next = existing
+        ? prev.map((i) => (i.productId === product.id ? { ...i, qty: targetQty } : i))
+        : [...prev, fromProduct(product, qty)];
+
       if (user) {
-        const next = [...prev];
-        const existing = next.find((i) => i.productId === product.id);
-        if (existing) existing.qty = Math.min(existing.qty + qty, MAX_QTY);
-        else next.push(fromProduct(product, qty));
         setItems(next);
         try {
           const data = await addCartItem(product.id, qty);
           setItems(data.cart.items.map(normalize));
         } catch (err) {
-          setItems(prev); // revert on stock errors
+          if (err?.status === 409) {
+            // Stock rejection — adopt the server's cart as-is. This both rolls
+            // the optimistic bump back and refreshes stale stock snapshots.
+            try {
+              const fresh = await getCart();
+              setItems(fresh.cart.items.map(normalize));
+            } catch {
+              setItems(prev);
+            }
+          } else {
+            setItems(prev);
+          }
           throw err;
         }
         return;
       }
 
-      // Guest cart lives in localStorage; stock checked against the card snapshot.
-      const maxQty = Math.min(product.stock, MAX_QTY);
-      const next = [...prev];
-      const existing = next.find((i) => i.productId === product.id);
-      const targetQty = (existing?.qty || 0) + qty;
-      if (targetQty > maxQty) {
-        const err = new Error(
-          `Only ${product.stock} left of "${product.title}". Lower the quantity to continue.`
-        );
-        err.fields = { qty: err.message };
-        throw err;
-      }
-      if (existing) existing.qty = targetQty;
-      else next.push(fromProduct(product, qty));
+      // Guest cart lives in localStorage.
       persistGuest(next);
     },
     [user, persistGuest]
@@ -152,6 +174,10 @@ export function CartProvider({ children }) {
       const item = prev.find((i) => i.productId === productId);
       if (!item) return;
 
+      if (qty > maxQtyFor(item.stock)) {
+        throw stockLimitError(item.title, item.stock || 0);
+      }
+
       if (user) {
         const next = prev.map((i) => (i.productId === productId ? { ...i, qty } : i));
         setItems(next);
@@ -159,20 +185,21 @@ export function CartProvider({ children }) {
           const data = await updateCartItem(productId, qty);
           setItems(data.cart.items.map(normalize));
         } catch (err) {
-          setItems(prev);
+          if (err?.status === 409) {
+            try {
+              const fresh = await getCart();
+              setItems(fresh.cart.items.map(normalize));
+            } catch {
+              setItems(prev);
+            }
+          } else {
+            setItems(prev);
+          }
           throw err;
         }
         return;
       }
 
-      const maxQty = Math.min(item.stock, MAX_QTY);
-      if (qty > maxQty) {
-        const err = new Error(
-          `Only ${item.stock} left of "${item.title}". Lower the quantity to continue.`
-        );
-        err.fields = { qty: err.message };
-        throw err;
-      }
       persistGuest(prev.map((i) => (i.productId === productId ? { ...i, qty } : i)));
     },
     [user, persistGuest]

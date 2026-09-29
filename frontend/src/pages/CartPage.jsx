@@ -134,13 +134,26 @@ export default function CartPage() {
                 <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
                   <QtyStepper
                     qty={item.qty}
-                    max={Math.min(item.stock, 99)}
+                    max={Math.min(item.stock ?? 0, 99)}
                     disabled={pendingId === item.productId}
                     onDecrement={() => changeQty(item.productId, item.qty, -1)}
                     onIncrement={() => changeQty(item.productId, item.qty, 1)}
                   />
                   <Price cents={item.qty * item.priceCents} className="font-mono text-base font-bold text-on-surface" />
                 </div>
+                {item.qty > item.stock && (
+                  <p
+                    className="mt-2 flex items-start gap-1.5 border border-error/30 bg-error-container/30 px-2 py-1 font-label-sm uppercase tracking-wide text-error"
+                    role="status"
+                  >
+                    <Icon name="error" className="shrink-0 text-sm" />
+                    <span>
+                      {item.stock > 0
+                        ? `Only ${item.stock} left in stock — lower the quantity or remove this item.`
+                        : 'Sold out since you bagged it — remove this item to continue.'}
+                    </span>
+                  </p>
+                )}
               </div>
             </li>
           ))}
