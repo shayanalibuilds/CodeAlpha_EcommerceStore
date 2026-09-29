@@ -4,6 +4,7 @@ import { listProducts } from '../api/products.js';
 import { useApi } from '../hooks/useApi.js';
 import ProductCard from '../components/ProductCard.jsx';
 import Alert from '../components/Alert.jsx';
+import Icon from '../components/Icon.jsx';
 import { CATEGORY_LABELS } from '../components/categories.js';
 
 const CHIPS = Object.entries(CATEGORY_LABELS);
@@ -50,127 +51,150 @@ export default function CatalogPage() {
   const hasFilters = Boolean(q || category);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <section className="rounded-xl bg-brand-600 px-6 py-8 text-white shadow-sm sm:px-10">
-        <h1 className="text-2xl font-bold sm:text-3xl">Everything for your study desk</h1>
-        <p className="mt-2 max-w-xl text-sm text-white/80">
-          Books, stationery, bags, audio and desk picks chosen for curious minds. Family-safe,
-          student-friendly prices.
-        </p>
-      </section>
-
-      <section className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <svg
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-700/40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="7" />
-            <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
-          </svg>
-          <input
-            type="search"
-            className="input !pl-9"
-            placeholder="Search products…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search products"
-          />
+    <main className="w-full bg-surface-pure">
+      {/* Top reassurance banner */}
+      <section className="w-full border-b border-border-grid bg-white">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-2.5 md:px-8">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <span className="h-1.5 w-1.5 flex-shrink-0 bg-accent-pine" aria-hidden="true" />
+            <span className="truncate font-label-sm text-label-sm uppercase tracking-widest text-on-surface">
+              Family-safe study staples · Mindfully packaged · Payments are mocked
+            </span>
+          </div>
+          <div className="hidden flex-shrink-0 items-center gap-2 text-text-muted sm:flex">
+            <Icon name="schedule" className="text-xs" />
+            <span className="font-label-sm text-label-sm uppercase tracking-wider">Ships in 24h</span>
+          </div>
         </div>
-        <label className="flex items-center justify-between gap-2 text-sm text-brand-700/70 sm:justify-end">
-          Sort by
-          <select
-            className="input !w-auto"
-            value={sort}
-            onChange={(e) => setParam('sort', e.target.value === 'newest' ? '' : e.target.value)}
-            aria-label="Sort products"
-          >
-            <option value="newest">Newest</option>
-            <option value="price">Price: low to high</option>
-          </select>
-        </label>
       </section>
 
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
-        <button
-          type="button"
-          onClick={() => setParam('category', '')}
-          className={`chip ${
-            !category
-              ? 'bg-brand-600 text-white ring-brand-600'
-              : 'bg-white text-brand-700 ring-brand-100 hover:bg-brand-50'
-          }`}
-        >
-          All
-        </button>
-        {CHIPS.map(([key, label]) => (
+      {/* Catalog header & control bar */}
+      <section className="mx-auto w-full max-w-[1440px] px-4 pt-10 pb-6 md:px-8">
+        <div className="flex flex-col justify-between gap-6 border-b border-border-grid pb-6 md:flex-row md:items-end">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <span className="font-label-md font-semibold uppercase tracking-widest text-accent-pine">
+                Selected Catalog
+              </span>
+              <span className="text-outline" aria-hidden="true">
+                /
+              </span>
+              <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
+                Curated Issue 04
+              </span>
+            </div>
+            <h1 className="font-headline-xl text-headline-xl tracking-tight text-on-surface">
+              {q ? `Results for “${q}”` : 'Study Desk Staples'}
+            </h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 self-start md:self-auto">
+            {/* Count metric pill */}
+            <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
+              <span className="font-label-md text-on-surface-variant">CATALOG REPERTOIRE:</span>
+              <span className="font-label-md font-semibold text-accent-pine">
+                {loading ? '—' : items.length} / ITEMS AVAILABLE
+              </span>
+            </div>
+            {/* Sort */}
+            <label className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2 transition-colors hover:border-border-strong">
+              <Icon name="tune" className="text-base text-on-surface" />
+              <span className="sr-only">Sort products</span>
+              <select
+                className="cursor-pointer bg-transparent font-label-md uppercase tracking-wider text-on-surface focus:outline-none"
+                value={sort}
+                onChange={(e) => setParam('sort', e.target.value === 'newest' ? '' : e.target.value)}
+                aria-label="Sort products"
+              >
+                <option value="newest">Sort: Newest</option>
+                <option value="price">Sort: Price</option>
+              </select>
+              <Icon name="expand_more" className="text-sm text-outline" />
+            </label>
+          </div>
+        </div>
+
+        {/* Tactile segmented filters */}
+        <div className="flex items-center gap-0 overflow-x-auto border-b border-border-grid pt-4">
           <button
-            key={key}
             type="button"
-            onClick={() => setParam('category', category === key ? '' : key)}
-            className={`chip ${
-              category === key
-                ? 'bg-brand-600 text-white ring-brand-600'
-                : 'bg-white text-brand-700 ring-brand-100 hover:bg-brand-50'
+            onClick={() => setParam('category', '')}
+            className={`-mb-px flex items-center gap-2 border-b-2 px-6 py-2.5 font-label-md transition-colors ${
+              !category
+                ? 'border-border-strong bg-text-primary text-white'
+                : 'border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
             }`}
           >
-            {label}
+            <span>All Pieces</span>
+            <span className="font-label-sm text-label-sm opacity-60">({items.length})</span>
           </button>
-        ))}
-      </div>
-
-      {error && (
-        <div className="mt-6">
-          <Alert onRetry={retry}>Could not load the catalog: {error.message}</Alert>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4" aria-hidden="true">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="card p-0">
-              <div className="aspect-[4/3] animate-pulse bg-brand-100/60" />
-              <div className="space-y-2 p-3">
-                <div className="h-3 w-16 animate-pulse rounded bg-brand-100/60" />
-                <div className="h-4 w-full animate-pulse rounded bg-brand-100/60" />
-                <div className="h-4 w-1/2 animate-pulse rounded bg-brand-100/60" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : items.length === 0 ? (
-        <div className="card mt-6 p-10 text-center">
-          <p className="text-3xl" aria-hidden="true">
-            🧺
-          </p>
-          <h2 className="mt-2 font-semibold text-brand-700">No products match</h2>
-          <p className="mt-1 text-sm text-brand-700/70">
-            Try a different search term or clear the filters.
-          </p>
-          {hasFilters && (
+          {CHIPS.map(([key, label]) => (
             <button
+              key={key}
               type="button"
-              className="btn-secondary mt-4"
-              onClick={() => {
-                setSearch('');
-                setParams({});
-              }}
+              onClick={() => setParam('category', category === key ? '' : key)}
+              className={`-mb-px flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-2.5 font-label-md transition-colors ${
+                category === key
+                  ? 'border-border-strong bg-text-primary text-white'
+                  : 'border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
+              }`}
             >
-              Clear search & filters
+              <span>{label}</span>
             </button>
-          )}
-        </div>
-      ) : (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {items.map((p) => (
-            <ProductCard key={p.id} product={p} />
           ))}
         </div>
-      )}
+      </section>
+
+      {/* Product grid */}
+      <section className="mx-auto w-full max-w-[1440px] px-4 py-6 pb-16 md:px-8">
+        {error && (
+          <div className="mb-6">
+            <Alert onRetry={retry}>Could not load the catalog: {error.message}</Alert>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="border border-border-grid bg-white p-space-md">
+                <div className="mb-space-md aspect-[4/3] animate-pulse bg-surface-container-low" />
+                <div className="mb-2 h-3 w-24 animate-pulse bg-surface-container-low" />
+                <div className="mb-2 h-4 w-3/4 animate-pulse bg-surface-container-low" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-container-low" />
+              </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center border border-border-grid bg-white px-6 py-space-xl text-center">
+            <div className="mb-space-md flex h-14 w-14 items-center justify-center border border-border-grid bg-surface-container-low text-text-muted">
+              <Icon name="search_off" className="text-2xl" />
+            </div>
+            <h2 className="font-headline-sm font-semibold uppercase tracking-tight text-on-surface">
+              No products match
+            </h2>
+            <p className="mt-space-xs max-w-md font-body-sm text-body-sm text-text-muted">
+              Try a different search term or clear the filters to see the full archive.
+            </p>
+            {hasFilters && (
+              <button
+                type="button"
+                className="btn-outline mt-space-lg"
+                onClick={() => {
+                  setSearch('');
+                  setParams({});
+                }}
+              >
+                Clear search &amp; filters
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }
