@@ -159,10 +159,6 @@ export default function CartPage() {
                   <Price cents={subtotalCents} />
                 </dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-text-muted uppercase tracking-wider font-label-md">Dispatch</dt>
-                <dd className="font-semibold text-accent-pine uppercase font-label-md tracking-wider">Complimentary</dd>
-              </div>
             </dl>
             <div className="flex items-center justify-between border-t border-border-grid pt-3">
               <span className="font-label-md uppercase tracking-widest text-text-muted">Total</span>

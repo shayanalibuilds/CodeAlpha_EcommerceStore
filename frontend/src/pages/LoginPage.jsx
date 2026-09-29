@@ -72,13 +72,13 @@ export default function LoginPage() {
       <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         {error && <Alert>{error}</Alert>}
 
-        <Field id="email" label="Curator Email Address" error={fields.email}>
+        <Field id="email" label="Email Address" error={fields.email}>
           <input
             id="email"
             type="email"
             autoComplete="email"
             className="input"
-            placeholder="curator@northwind.market"
+            placeholder="you@example.com"
             value={form.email}
             onChange={set('email')}
             required
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
         <PasswordField
           id="password"
-          label="Passphrase Credentials"
+          label="Password"
           error={fields.password}
           autoComplete="current-password"
           placeholder="••••••••••••"
@@ -100,7 +100,7 @@ export default function LoginPage() {
           className="mt-2 flex h-12 w-full items-center justify-center gap-2 border border-accent-pine bg-accent-pine font-label-lg uppercase tracking-widest text-white transition-colors hover:bg-accent-pine-hover disabled:opacity-50"
           disabled={busy}
         >
-          <span>{busy ? 'Authenticating…' : 'Continue to Market'}</span>
+          <span>{busy ? 'Signing in…' : 'Sign In'}</span>
           <Icon name="arrow_forward" className="text-base" />
         </button>
 

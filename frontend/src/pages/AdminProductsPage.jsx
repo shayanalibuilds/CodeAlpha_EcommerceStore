@@ -103,11 +103,11 @@ function ProductForm({ initial, onSaved, onCancel }) {
         <div className="flex items-center gap-2">
           <button type="button" className="btn-outline" onClick={onCancel}>
             <Icon name="undo" className="text-[16px]" />
-            Revert Draft
+            Cancel
           </button>
           <button type="submit" className="btn-pine" disabled={busy}>
             <Icon name="sync" className="text-[16px]" />
-            {busy ? 'Syncing…' : 'Commit & Sync'}
+            {busy ? 'Saving…' : 'Commit & Sync'}
           </button>
         </div>
       </header>
@@ -156,7 +156,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
           <Icon name="description" className="text-base text-text-muted" />
         </header>
         <div className="p-space-md">
-          <Field id="p-desc" label="Markdown Specification [Description]" error={fields.description}>
+          <Field id="p-desc" label="Description" error={fields.description}>
             <textarea id="p-desc" className="input min-h-24" value={form.description} onChange={set('description')} placeholder="A short, family-safe description (at least 10 characters)." required />
           </Field>
         </div>
@@ -184,15 +184,15 @@ function ProductForm({ initial, onSaved, onCancel }) {
       <div className="sticky bottom-4 mt-space-lg flex flex-col items-center justify-between gap-space-sm border border-border-grid bg-surface-pure px-space-lg py-space-md sm:flex-row">
         <p className="flex items-center gap-2 font-label-sm uppercase text-text-muted">
           <span className="h-2 w-2 bg-accent-pine" aria-hidden="true" />
-          Draft staged — {isEdit ? 'updates apply immediately on commit' : 'a new SKU joins the catalog on commit'}
+          {isEdit ? 'Updates apply immediately on save' : 'A new product joins the catalog on save'}
         </p>
         <div className="flex w-full items-center gap-2 sm:w-auto">
           <button type="button" className="btn-outline flex-1 sm:flex-none" onClick={onCancel}>
-            Revert Draft
+            Cancel
           </button>
           <button type="submit" className="btn-pine flex-1 sm:flex-none" disabled={busy}>
             <Icon name="sync" className="text-[16px]" />
-            {busy ? 'Syncing…' : 'Commit & Sync'}
+            {busy ? 'Saving…' : 'Commit & Sync'}
           </button>
         </div>
       </div>
@@ -291,12 +291,9 @@ export default function AdminProductsPage() {
             <div className="flex items-center gap-space-xs">
               <span className="inline-block h-2 w-2 bg-accent-pine" aria-hidden="true" />
               <span className="font-label-sm uppercase tracking-widest text-text-muted">
-                INDEX // NODE 04 : ARCHIVE &amp; TELEMETRY
+                Admin // Product Operations
               </span>
             </div>
-            <span className="hidden font-label-sm uppercase text-text-muted md:inline">
-              LAST SYNC: {new Date().toLocaleTimeString('en-US', { hour12: false })} UTC
-            </span>
           </div>
           <div className="mt-space-sm flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
             <div className="max-w-2xl">
@@ -304,8 +301,8 @@ export default function AdminProductsPage() {
                 Product Repertoire
               </h1>
               <p className="mt-space-xs font-body-md text-text-muted">
-                Curated catalog records, live stock verification, and SKU telemetry across the
-                student-run depot.
+                Curated catalog records with live stock verification across the student-run
+                depot.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-space-xs">
@@ -409,7 +406,7 @@ export default function AdminProductsPage() {
               <span className="flex items-center gap-3 font-label-sm uppercase text-text-muted">
                 Rendering {filtered.length} of {items.length} records
                 <span className="h-4 w-px bg-border-grid" aria-hidden="true" />
-                <span className="font-semibold text-text-primary">Auto-Sync: Realtime</span>
+                <span className="font-semibold text-text-primary">Refreshes on every action</span>
               </span>
             </div>
 
@@ -417,7 +414,7 @@ export default function AdminProductsPage() {
               <table className="w-full min-w-[820px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border-strong bg-surface-paper font-label-md uppercase tracking-widest text-text-muted">
-                    <th className="w-[30%] px-space-md py-3.5 font-medium">Artifact / SKU</th>
+                    <th className="w-[30%] px-space-md py-3.5 font-medium">Artifact / Ref</th>
                     <th className="px-space-md py-3.5 font-medium">Category</th>
                     <th className="px-space-md py-3.5 text-right font-medium">Retail Price</th>
                     <th className="px-space-md py-3.5 font-medium">Stock &amp; Status</th>

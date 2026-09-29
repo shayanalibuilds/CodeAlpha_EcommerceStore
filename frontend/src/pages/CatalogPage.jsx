@@ -62,8 +62,8 @@ export default function CatalogPage() {
             </span>
           </div>
           <div className="hidden flex-shrink-0 items-center gap-2 text-text-muted sm:flex">
-            <Icon name="schedule" className="text-xs" />
-            <span className="font-label-sm text-label-sm uppercase tracking-wider">Ships in 24h</span>
+            <Icon name="inventory" className="text-xs" />
+            <span className="font-label-sm text-label-sm uppercase tracking-wider">Live stock counts</span>
           </div>
         </div>
       </section>
@@ -80,7 +80,7 @@ export default function CatalogPage() {
                 /
               </span>
               <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
-                Curated Issue 04
+                Student-Run Market
               </span>
             </div>
             <h1 className="font-headline-xl text-headline-xl tracking-tight text-on-surface">

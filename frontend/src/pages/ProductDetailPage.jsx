@@ -171,8 +171,8 @@ export default function ProductDetailPage() {
                   className="relative z-10 max-h-[480px] w-full max-w-[420px] object-contain py-2 transition-transform duration-300 ease-out group-hover:scale-[1.01]"
                 />
                 <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 border border-border-grid bg-surface px-2 py-1 font-label-sm text-on-surface-variant">
-                  <Icon name="360" className="text-sm" />
-                  <span>Static Studio Plate</span>
+                  <Icon name="image" className="text-sm" />
+                  <span>Catalog photograph</span>
                 </div>
               </div>
 
@@ -240,7 +240,7 @@ export default function ProductDetailPage() {
                 </h1>
                 <div className="flex items-baseline gap-4 border-y border-border-grid py-2">
                   <Price cents={product.priceCents} className="font-headline-md font-bold tracking-tight text-on-surface" />
-                  <span className="font-label-sm uppercase tracking-wider text-outline">USD · VAT Inc.</span>
+                  <span className="font-label-sm uppercase tracking-wider text-outline">USD</span>
                 </div>
               </div>
 
@@ -251,9 +251,9 @@ export default function ProductDetailPage() {
               <div className="grid grid-cols-2 gap-px border border-border-grid bg-border-grid">
                 {[
                   { icon: 'inventory_2', k: 'Stock', v: product.stock > 0 ? `${product.stock} units` : 'Sold out' },
-                  { icon: 'verified_user', k: 'Checkout', v: 'Mocked · Secure' },
-                  { icon: 'local_shipping', k: 'Dispatch', v: 'Ships in 24h' },
-                  { icon: 'published_with_changes', k: 'Returns', v: '14-day window' },
+                  { icon: 'verified_user', k: 'Checkout', v: 'Mocked · No charges' },
+                  { icon: 'local_shipping', k: 'Dispatch', v: 'Tracked in My Orders' },
+                  { icon: 'published_with_changes', k: 'Restock', v: 'Automatic on cancel' },
                 ].map((f) => (
                   <div key={f.k} className="flex items-center gap-2 bg-surface p-2">
                     <Icon name={f.icon} className="text-xl text-accent-pine" />
@@ -284,18 +284,17 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Origin & circularity pass row */}
+            {/* Product record row */}
             <div className="flex cursor-default items-center justify-between border border-border-grid bg-surface p-4">
               <div className="flex items-center gap-4">
-                <Icon name="qr_code_2" className="text-tertiary" />
+                <Icon name="history" className="text-tertiary" />
                 <div className="flex flex-col">
                   <span className="font-label-md font-semibold uppercase tracking-wider text-on-surface">
-                    Origin &amp; Stock Pass
+                    Product Record
                   </span>
                   <span className="font-body-sm text-outline">Listed {new Date(product.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 </div>
               </div>
-              <Icon name="arrow_forward" className="text-on-surface-variant" />
             </div>
           </div>
         </div>

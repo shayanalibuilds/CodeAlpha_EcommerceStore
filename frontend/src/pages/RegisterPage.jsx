@@ -54,13 +54,13 @@ export default function RegisterPage() {
           />
         </Field>
 
-        <Field id="email" label="Verified Email" error={fields.email}>
+        <Field id="email" label="Email Address" error={fields.email}>
           <input
             id="email"
             type="email"
             autoComplete="email"
             className="input"
-            placeholder="curator@institution.arch"
+            placeholder="you@example.com"
             value={form.email}
             onChange={set('email')}
             required
@@ -69,7 +69,7 @@ export default function RegisterPage() {
 
         <Field
           id="password"
-          label="Create Root Passphrase"
+          label="Create Password"
           error={fields.password}
           hint="Use at least 8 characters."
         >
@@ -99,7 +99,7 @@ export default function RegisterPage() {
           className="mt-2 flex h-12 w-full items-center justify-center gap-2 border border-border-strong bg-border-strong font-label-lg uppercase tracking-widest text-surface-pure transition-colors hover:bg-on-surface-variant disabled:opacity-50"
           disabled={busy}
         >
-          <span>{busy ? 'Submitting…' : 'Submit Application'}</span>
+          <span>{busy ? 'Creating account…' : 'Create Account'}</span>
           <Icon name="verified_user" className="text-base" />
         </button>
 

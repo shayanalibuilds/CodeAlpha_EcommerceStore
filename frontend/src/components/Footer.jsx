@@ -49,7 +49,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-2.5 text-xs uppercase tracking-wider text-text-muted">
               <li>
                 <Link to="/orders" className="transition-colors hover:text-text-primary">
-                  My Order Dispatch Status
+                  My Orders
                 </Link>
               </li>
               <li>
@@ -62,8 +62,6 @@ export default function Footer() {
                   Create An Account
                 </Link>
               </li>
-              <li className="cursor-default">Returns Within 14 Days</li>
-              <li className="cursor-default">Studio Inquiries</li>
             </ul>
           </div>
 
@@ -86,7 +84,7 @@ export default function Footer() {
           <span>© 2026 Northwind Market. All rights reserved.</span>
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-            System Nominal · v2.4
+            Student-run demo · Payments are mocked
           </span>
         </div>
       </div>

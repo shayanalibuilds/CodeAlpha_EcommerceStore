@@ -95,10 +95,10 @@ export default function AdminOrdersPage() {
           <div className="flex flex-col">
             <div className="flex items-center gap-space-xs font-label-sm uppercase tracking-widest text-accent-pine">
               <span className="inline-block h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-              <span>Logistics Node // Campus Depot 01</span>
+              <span>Admin // Order Operations</span>
             </div>
             <h1 className="mt-1 font-headline-md uppercase tracking-tight text-text-primary">
-              Dispatch &amp; Order Telemetry
+              Orders &amp; Fulfillment
             </h1>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -176,20 +176,22 @@ export default function AdminOrdersPage() {
         </div>
         <div className="flex flex-col justify-between bg-surface-pure p-space-lg">
           <div className="flex items-center justify-between text-text-muted">
-            <span className="font-label-sm uppercase tracking-widest">Dispatch Velocity</span>
+            <span className="font-label-sm uppercase tracking-widest">Average Order Value</span>
             <Icon name="timer" className="text-[18px]" />
           </div>
           <div className="my-space-md">
             <div className="font-headline-lg font-semibold tracking-tight text-text-primary">
-              {counts[''] + counts.placed + counts.packed + counts.shipped + counts.cancelled === all.length ? 'Live' : 'Syncing'}
+              ${all.filter((o) => o.status !== 'cancelled').length
+                ? (stats.gross / all.filter((o) => o.status !== 'cancelled').length).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                : '0.00'}
             </div>
             <div className="mt-1 flex items-center gap-1 font-label-sm uppercase text-accent-pine">
               <Icon name="bolt" className="text-[14px]" />
-              <span>Realtime status transitions</span>
+              <span>Across {all.filter((o) => o.status !== 'cancelled').length} active orders</span>
             </div>
           </div>
           <div className="flex items-center justify-between border-t border-border-grid pt-2 font-label-sm text-text-muted">
-            <span>Status Engine</span>
+            <span>Status Flow</span>
             <span className="font-semibold text-text-primary">Placed→Packed→Shipped</span>
           </div>
         </div>
@@ -205,8 +207,8 @@ export default function AdminOrdersPage() {
             </div>
           </div>
           <div className="flex items-center justify-between border-t border-border-grid pt-2 font-label-sm text-text-muted">
-            <span>Ledger Integrity</span>
-            <span className="font-semibold text-accent-pine">GRADE AA PASS</span>
+            <span>Cancelled Stock</span>
+            <span className="font-semibold text-accent-pine">Restocked automatically</span>
           </div>
         </div>
       </div>
@@ -228,7 +230,7 @@ export default function AdminOrdersPage() {
         <span className="flex items-center gap-3 self-end font-label-sm uppercase text-text-muted md:self-auto">
           Rendering {orders.length} of {all.length} records
           <span className="h-4 w-px bg-border-grid" aria-hidden="true" />
-          <span className="font-semibold text-text-primary">Auto-Sync: Realtime</span>
+          <span className="font-semibold text-text-primary">Refreshes on every action</span>
         </span>
       </div>
 

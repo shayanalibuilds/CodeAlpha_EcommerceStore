@@ -7,23 +7,9 @@ import Icon from './Icon.jsx';
  * per the admin mockups (04 / 07 / 08). Pages render inside <main>.
  */
 
-const NAV_SECTIONS = [
-  {
-    label: 'Catalogue & Ops',
-    items: [
-      { to: '/admin/products', label: 'Products', icon: 'inventory_2' },
-      { to: '/admin/orders', label: 'Orders', icon: 'receipt_long' },
-    ],
-  },
-  {
-    label: 'Intelligence',
-    items: [
-      { label: 'Inventory', icon: 'warehouse', soon: true },
-      { label: 'Customers', icon: 'group', soon: true },
-      { label: 'Analytics', icon: 'analytics', soon: true },
-      { label: 'Settings', icon: 'settings', soon: true },
-    ],
-  },
+const NAV_ITEMS = [
+  { to: '/admin/products', label: 'Products', icon: 'inventory_2' },
+  { to: '/admin/orders', label: 'Orders', icon: 'receipt_long' },
 ];
 
 export default function AdminLayout({ section = 'Console', children }) {
@@ -51,48 +37,26 @@ export default function AdminLayout({ section = 'Console', children }) {
           <span className="border border-border-grid px-space-xs py-0.5 font-label-sm text-text-muted">OPS</span>
         </div>
         <nav className="flex flex-1 flex-col py-space-sm" aria-label="Admin navigation">
-          {NAV_SECTIONS.map((sec) => (
-            <div key={sec.label}>
-              <div className="border-t border-border-grid px-space-md py-space-xs font-label-sm uppercase tracking-widest text-text-muted first:border-t-0">
-                {sec.label}
-              </div>
-              {sec.items.map((item) =>
-                item.soon ? (
-                  <span
-                    key={item.label}
-                    className="flex cursor-not-allowed items-center gap-space-sm px-space-md py-space-sm font-label-lg uppercase text-on-surface-variant/40"
-                    title="Planned — not part of this demo"
-                  >
-                    <Icon name={item.icon} className="text-[18px]" />
-                    {item.label}
-                    <span className="ml-auto border border-border-grid px-1 py-0.5 font-label-sm text-text-muted">SOON</span>
-                  </span>
-                ) : (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className={({ isActive }) =>
-                      `flex items-center gap-space-sm px-space-md py-space-sm font-label-lg uppercase transition-colors ${
-                        isActive
-                          ? 'border-l-2 border-border-strong bg-accent-pine font-semibold text-white'
-                          : 'border-l-2 border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
-                      }`
-                    }
-                  >
-                    <Icon name={item.icon} className="text-[18px]" />
-                    {item.label}
-                  </NavLink>
-                )
-              )}
-            </div>
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-space-sm px-space-md py-space-sm font-label-lg uppercase transition-colors ${
+                  isActive
+                    ? 'border-l-2 border-border-strong bg-accent-pine font-semibold text-white'
+                    : 'border-l-2 border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
+                }`
+              }
+            >
+              <Icon name={item.icon} className="text-[18px]" />
+              {item.label}
+            </NavLink>
           ))}
         </nav>
-        <div className="flex items-center justify-between border-t border-border-grid p-space-md">
-          <span className="flex items-center gap-space-sm font-label-sm uppercase text-text-muted">
-            <span className="h-2 w-2 bg-accent-pine" aria-hidden="true" />
-            Grid Sync: 100%
-          </span>
-          <span className="font-label-sm text-text-muted">v2.4</span>
+        <div className="flex items-center gap-space-sm border-t border-border-grid p-space-md font-label-sm uppercase text-text-muted">
+          <span className="h-2 w-2 bg-accent-pine" aria-hidden="true" />
+          CodeAlpha demo console
         </div>
       </aside>
 
@@ -113,10 +77,6 @@ export default function AdminLayout({ section = 'Console', children }) {
             </span>
           </div>
           <div className="flex items-center gap-space-md">
-            <span className="hidden items-center gap-2 font-label-sm uppercase text-text-primary sm:flex">
-              <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-              System Live
-            </span>
             <span className="flex items-center gap-space-sm border-l border-border-grid pl-space-sm">
               <span className="flex h-8 w-8 items-center justify-center border border-border-grid bg-surface-paper font-label-sm font-semibold text-text-primary">
                 {initials}

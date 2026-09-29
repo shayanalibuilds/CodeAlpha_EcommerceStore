@@ -85,7 +85,7 @@ export default function CheckoutPage() {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <span className="font-label-md font-semibold uppercase tracking-widest text-accent-pine">
-              Secure Gateway
+              Checkout
             </span>
             <span className="text-outline" aria-hidden="true">/</span>
             <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
@@ -96,12 +96,6 @@ export default function CheckoutPage() {
           <p className="mt-1 font-body-sm text-text-muted">
             Signed in as {user?.email} — payments here are mocked, nothing is charged.
           </p>
-        </div>
-        <div className="flex items-center gap-2 border border-accent-pine/40 bg-accent-pine/5 px-4 py-2">
-          <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-          <span className="font-label-md font-semibold uppercase tracking-wider text-tertiary">
-            STATUS: NOMINAL
-          </span>
         </div>
       </div>
 

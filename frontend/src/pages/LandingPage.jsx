@@ -39,7 +39,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between text-[11px] font-medium uppercase tracking-widest text-text-muted">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-            <span>Complimentary student dispatch over $35</span>
+            <span>Student-run demo market — payments are mocked</span>
           </div>
           <span className="hidden font-mono sm:inline">Curated Nordic Study Goods</span>
           <span className="hidden lg:inline">AUTUMN / WINTER 2026 ARCHIVE</span>
@@ -83,9 +83,9 @@ export default function LandingPage() {
             </div>
             <div className="mt-14 flex w-full items-center justify-between border-t border-border-grid pt-6 text-xs text-text-muted">
               <div className="flex items-center gap-3">
-                <span className="text-base font-bold text-text-primary">4.92 / 5.0</span>
+                <span className="text-base font-bold text-text-primary">{loading ? '—' : items.length} curated goods</span>
                 <span className="text-border-grid">|</span>
-                <span className="uppercase tracking-wider">Trusted by student desks since 2026</span>
+                <span className="uppercase tracking-wider">Live stock &amp; orders in this demo</span>
               </div>
               <span className="font-mono text-[11px]">DEMO BUILD</span>
             </div>
@@ -115,7 +115,7 @@ export default function LandingPage() {
                     <div className="flex h-full flex-col justify-between md:col-span-6">
                       <div>
                         <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wider text-text-muted">
-                          <span>Serial No. {lead.slug.slice(0, 2).toUpperCase()}-22</span>
+                          <span className="font-mono">Ref. {lead.slug.toUpperCase()}</span>
                           <span className="text-xs font-bold uppercase tracking-widest text-accent-pine">
                             {CATEGORY_LABELS[lead.category] || lead.category}
                           </span>

@@ -51,12 +51,9 @@ export default function ArchiveModal({ product, mode = 'archive', busy, onConfir
                 <span className="h-1.5 w-1.5 bg-white" aria-hidden="true" />
                 {archiving ? 'Confirm catalog action' : 'Confirm restore'}
               </span>
-              <span className="pl-1 font-mono font-label-sm text-text-muted">
-                SYS // REQ-{archiving ? 'DEL' : 'RES'}-{product.id.slice(-4).toUpperCase()}
-              </span>
             </div>
             <h2 id="archive-modal-title" className="mt-1 font-headline-md tracking-tight text-text-primary">
-              {archiving ? 'Permanently de-list this artifact?' : 'Restore this artifact to the catalog?'}
+              {archiving ? 'De-list this artifact?' : 'Restore this artifact to the catalog?'}
             </h2>
           </div>
           <button
