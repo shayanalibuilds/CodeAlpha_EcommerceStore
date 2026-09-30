@@ -2,38 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Northwind Market — Minimalist / Architectural base
+   Space Grotesk everywhere, zero radius on the storefront, 1px hairline grid.
+--------------------------------------------------------------------------- */
+
 :root {
   color-scheme: light;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  @apply bg-brand-50 text-brand-900 antialiased;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  @apply bg-surface-pure text-on-surface antialiased;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+::selection {
+  @apply bg-accent-pine text-white;
+}
+
+/* Material Symbols (loaded via Google Fonts in index.html) */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 @layer components {
+  /* --- Buttons: flat, sharp, uppercase, tracking-wide --- */
   .btn {
-    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply btn bg-text-primary text-white hover:bg-accent-pine;
   }
-  .btn-secondary {
-    @apply btn bg-white text-brand-700 ring-1 ring-inset ring-brand-100 hover:bg-brand-100;
+  .btn-pine {
+    @apply btn border border-accent-pine bg-accent-pine text-white hover:bg-accent-pine-hover;
+  }
+  .btn-outline {
+    @apply btn border border-border-grid bg-white text-text-primary hover:border-border-strong;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 px-2 py-1 text-label-md uppercase tracking-wider text-text-muted transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-danger {
-    @apply btn bg-red-600 text-white hover:bg-red-700;
+    @apply btn border border-error bg-white text-error hover:bg-error hover:text-white;
   }
+
+  /* --- Inputs: h-11 sharp fields with hairline borders --- */
   .input {
-    @apply block w-full rounded-md border-0 bg-white px-3 py-2 text-brand-900 shadow-sm ring-1 ring-inset ring-brand-100 placeholder:text-brand-700/40 focus:ring-2 focus:ring-inset focus:ring-brand-500;
+    @apply block w-full border border-border-grid bg-white px-3 py-2.5 text-body-md text-text-primary placeholder:text-text-muted/70 transition-colors focus:border-accent-pine focus:outline-none;
   }
-  .label {
-    @apply block text-sm font-medium text-brand-700 mb-1;
+  .input-error {
+    @apply border-error focus:border-error;
   }
+
+  /* --- Field label: uppercase micro label --- */
+  .field-label {
+    @apply mb-1 block font-label-md text-label-md uppercase tracking-wider text-on-surface-variant;
+  }
+
+  /* --- Surfaces --- */
   .card {
-    @apply rounded-lg bg-white shadow-sm ring-1 ring-brand-100 overflow-hidden;
+    @apply overflow-hidden border border-border-grid bg-white;
   }
+
+  /* --- Square chip / tag used across all designs --- */
   .chip {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset;
+    @apply inline-flex items-center gap-1.5 border border-border-grid bg-white px-2 py-0.5 font-label-sm uppercase tracking-wider;
+  }
+
+  /* --- Micro meta label --- */
+  .meta-label {
+    @apply font-label-sm uppercase tracking-widest text-text-muted;
   }
 }

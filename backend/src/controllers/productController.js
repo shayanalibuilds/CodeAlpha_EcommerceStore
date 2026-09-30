@@ -14,13 +14,18 @@ export const list = wrap(async (req, res) => {
   // includeArchived=1 is honored for admins only; everyone else sees live products.
   const includeArchived = req.query.includeArchived === '1' && req.user?.role === 'admin';
 
+  // Catalog-wide total, ignoring search/category filters — the UI's
+  // "All Pieces (N)" counter must always describe the whole shop, not the
+  // currently filtered slice.
+  const total = await Product.countDocuments(includeArchived ? {} : { archived: false });
+
   const filter = {};
   if (!includeArchived) filter.archived = false;
 
   if (category) {
     const cat = String(category).toLowerCase();
     if (!CATEGORIES.includes(cat)) {
-      return res.json({ items: [], count: 0 });
+      return res.json({ items: [], count: 0, total });
     }
     filter.category = cat;
   }
@@ -33,7 +38,7 @@ export const list = wrap(async (req, res) => {
   const sortSpec = sort === 'price' ? { priceCents: 1, _id: 1 } : { createdAt: -1, _id: -1 };
   const items = await Product.find(filter).sort(sortSpec).limit(200).lean();
 
-  res.json({ items: items.map(toPublicProduct), count: items.length });
+  res.json({ items: items.map(toPublicProduct), count: items.length, total });
 });
 
 export const getOne = wrap(async (req, res) => {

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import AuthLayout from '../components/AuthLayout.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
+import Icon from '../components/Icon.jsx';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -14,6 +16,7 @@ export default function RegisterPage() {
   const [fields, setFields] = useState({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [show, setShow] = useState(false);
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -34,29 +37,24 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col px-4 py-10">
-      <h1 className="text-2xl font-bold text-brand-700">Create account</h1>
-      <p className="mt-1 text-sm text-brand-700/70">
-        One quick form and you can start collecting study picks.
-      </p>
-
-      <form onSubmit={onSubmit} className="card mt-6 p-6" noValidate>
+    <AuthLayout active="register">
+      <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         {error && <Alert>{error}</Alert>}
 
-        <Field id="name" label="Name" error={fields.name}>
+        <Field id="name" label="Curator Name" error={fields.name}>
           <input
             id="name"
             type="text"
             autoComplete="name"
             className="input"
-            placeholder="Your name"
+            placeholder="e.g. V. Sterling"
             value={form.name}
             onChange={set('name')}
             required
           />
         </Field>
 
-        <Field id="email" label="Email" error={fields.email}>
+        <Field id="email" label="Email Address" error={fields.email}>
           <input
             id="email"
             type="email"
@@ -71,33 +69,47 @@ export default function RegisterPage() {
 
         <Field
           id="password"
-          label="Password"
+          label="Create Password"
           error={fields.password}
           hint="Use at least 8 characters."
         >
-          <input
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            className="input"
-            placeholder="At least 8 characters"
-            value={form.password}
-            onChange={set('password')}
-            required
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={show ? 'text' : 'password'}
+              autoComplete="new-password"
+              className="input pr-14"
+              placeholder="Min. 8 characters / mixed entropy"
+              value={form.password}
+              onChange={set('password')}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm uppercase tracking-wider text-text-muted transition-colors hover:text-text-primary"
+            >
+              {show ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </Field>
 
-        <button type="submit" className="btn-primary w-full" disabled={busy}>
-          {busy ? 'Creating account…' : 'Create account'}
+        <button
+          type="submit"
+          className="mt-2 flex h-12 w-full items-center justify-center gap-2 border border-border-strong bg-border-strong font-label-lg uppercase tracking-widest text-surface-pure transition-colors hover:bg-on-surface-variant disabled:opacity-50"
+          disabled={busy}
+        >
+          <span>{busy ? 'Creating account…' : 'Create Account'}</span>
+          <Icon name="verified_user" className="text-base" />
         </button>
 
-        <p className="mt-4 text-center text-sm text-brand-700/70">
-          Already have an account?{' '}
-          <Link to="/login" state={{ next }} className="font-semibold text-brand-600 underline">
+        <p className="text-center font-body-sm text-text-muted">
+          Already registered?{' '}
+          <Link to="/login" state={{ next }} className="font-semibold text-accent-pine underline underline-offset-4">
             Sign in
           </Link>
         </p>
       </form>
-    </main>
+    </AuthLayout>
   );
 }

@@ -1,4 +1,4 @@
-// Shared labels/chips/formatters for orders.
+// Shared labels/chips/formatters for orders — architectural chip styles.
 export const STATUS_LABELS = {
   placed: 'Placed',
   packed: 'Packed',
@@ -6,11 +6,19 @@ export const STATUS_LABELS = {
   cancelled: 'Cancelled',
 };
 
+// Square status tags (border + tint), per the admin telemetry design.
 export const STATUS_CHIP = {
-  placed: 'bg-sky-50 text-sky-700 ring-sky-200',
-  packed: 'bg-amber-50 text-amber-700 ring-amber-200',
-  shipped: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 ring-red-200',
+  placed: 'border-border-grid bg-surface-container-low text-on-surface',
+  packed: 'border-border-grid bg-surface-container-highest text-on-surface',
+  shipped: 'border-accent-pine bg-accent-pine text-white',
+  cancelled: 'border-error bg-white text-error',
+};
+
+export const STATUS_ICON = {
+  placed: 'schedule',
+  packed: 'inventory',
+  shipped: 'local_shipping',
+  cancelled: 'close',
 };
 
 export const PAYMENT_LABELS = {
@@ -20,7 +28,7 @@ export const PAYMENT_LABELS = {
 };
 
 export function orderNumber(id) {
-  return `#NW-${id.slice(-6).toUpperCase()}`;
+  return `NW-${id.slice(-6).toUpperCase()}`;
 }
 
 export function formatDate(iso) {
@@ -30,6 +38,21 @@ export function formatDate(iso) {
       month: 'short',
       day: 'numeric',
     });
+  } catch {
+    return '';
+  }
+}
+
+export function timeAgo(iso) {
+  try {
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1) return 'Just now';
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    return `${d}d ago`;
   } catch {
     return '';
   }

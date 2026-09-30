@@ -7,6 +7,7 @@ import Price from '../components/Price.jsx';
 import Alert from '../components/Alert.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { PageLoader } from '../components/Spinner.jsx';
+import Icon from '../components/Icon.jsx';
 
 export default function CartPage() {
   const { items, subtotalCents, count, loading, updateQty, remove } = useCart();
@@ -39,17 +40,17 @@ export default function CartPage() {
     }
   };
 
-  if (loading) return <PageLoader label="Loading your cart…" />;
+  if (loading) return <PageLoader label="Loading your bag…" />;
 
   if (items.length === 0) {
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <EmptyState
-          icon="🛒"
-          title="Your cart is empty"
+          icon="shopping_bag"
+          title="Your bag is empty"
           action={
-            <Link to="/" className="btn-primary">
-              Browse catalog
+            <Link to="/products" className="btn-primary">
+              Browse the catalog
             </Link>
           }
         >
@@ -60,11 +61,29 @@ export default function CartPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-brand-700">Your cart</h1>
-      <p className="mt-1 text-sm text-brand-700/70">
-        {count} {count === 1 ? 'item' : 'items'} ready to go.
-      </p>
+    <main className="mx-auto w-full max-w-[1200px] px-4 py-8 pb-20 md:px-8">
+      {/* Header strip */}
+      <div className="flex flex-col justify-between gap-4 border-b border-border-grid pb-6 md:flex-row md:items-end">
+        <div>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-label-md font-semibold uppercase tracking-widest text-accent-pine">
+              Carry Tray
+            </span>
+            <span className="text-outline" aria-hidden="true">/</span>
+            <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
+              Pre-Checkout Review
+            </span>
+          </div>
+          <h1 className="font-headline-lg tracking-tight text-on-surface">Your Bag</h1>
+          <p className="mt-1 font-body-sm text-text-muted">
+            {count} {count === 1 ? 'item' : 'items'} reserved for review — stock is not held until checkout.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
+          <span className="font-label-md text-on-surface-variant">BAG MANIFEST:</span>
+          <span className="font-label-md font-semibold text-accent-pine">{count} / UNITS</span>
+        </div>
+      </div>
 
       {error && (
         <div className="mt-4">
@@ -72,74 +91,107 @@ export default function CartPage() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
-        <ul className="space-y-3">
-          {items.map((item) => (
-            <li key={item.productId} className="card flex gap-3 p-3 sm:gap-4 sm:p-4">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
+        {/* Line items */}
+        <ul className="flex flex-col">
+          {items.map((item, idx) => (
+            <li
+              key={item.productId}
+              className={`flex gap-4 py-space-md ${idx > 0 ? 'border-t border-border-grid' : ''}`}
+            >
               <Link to={`/products/${item.productId}`} className="shrink-0">
-                <img
-                  src={item.imageUrl || '/images/products/placeholder.svg'}
-                  alt={item.title}
-                  className="h-20 w-20 rounded-md object-cover sm:h-24 sm:w-24"
-                />
+                <div className="flex h-24 w-24 items-center justify-center border border-border-grid bg-surface-container-low sm:h-28 sm:w-28">
+                  <img
+                    src={item.imageUrl || '/images/products/placeholder.svg'}
+                    alt={item.title}
+                    className="h-full w-full object-cover grayscale-[15%]"
+                  />
+                </div>
               </Link>
               <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-start justify-between gap-3">
-                  <Link
-                    to={`/products/${item.productId}`}
-                    className="text-sm font-semibold text-brand-900 hover:underline"
-                  >
-                    {item.title}
-                  </Link>
+                  <div>
+                    <Link
+                      to={`/products/${item.productId}`}
+                      className="font-headline-sm tracking-tight text-on-surface hover:text-accent-pine"
+                    >
+                      {item.title}
+                    </Link>
+                    <p className="mt-0.5 font-body-sm text-text-muted">
+                      <Price cents={item.priceCents} /> each
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={() => onRemove(item.productId)}
                     disabled={pendingId === item.productId}
-                    className="shrink-0 text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                    className="btn-ghost !px-1.5 hover:!text-error"
                   >
-                    Remove
+                    <Icon name="delete" className="text-base" />
+                    <span className="hidden sm:inline">Remove</span>
                   </button>
                 </div>
-                <p className="mt-0.5 text-xs text-brand-700/60">
-                  <Price cents={item.priceCents} /> each
-                </p>
-                <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
                   <QtyStepper
                     qty={item.qty}
-                    max={Math.min(item.stock, 99)}
+                    max={Math.min(item.stock ?? 0, 99)}
                     disabled={pendingId === item.productId}
                     onDecrement={() => changeQty(item.productId, item.qty, -1)}
                     onIncrement={() => changeQty(item.productId, item.qty, 1)}
                   />
-                  <Price cents={item.qty * item.priceCents} className="font-bold text-brand-700" />
+                  <Price cents={item.qty * item.priceCents} className="font-mono text-base font-bold text-on-surface" />
                 </div>
+                {item.qty > item.stock && (
+                  <p
+                    className="mt-2 flex items-start gap-1.5 border border-error/30 bg-error-container/30 px-2 py-1 font-label-sm uppercase tracking-wide text-error"
+                    role="status"
+                  >
+                    <Icon name="error" className="shrink-0 text-sm" />
+                    <span>
+                      {item.stock > 0
+                        ? `Only ${item.stock} left in stock — lower the quantity or remove this item.`
+                        : 'Sold out since you bagged it — remove this item to continue.'}
+                    </span>
+                  </p>
+                )}
               </div>
             </li>
           ))}
         </ul>
 
-        <aside className="card h-fit p-5 lg:sticky lg:top-20">
-          <h2 className="font-semibold text-brand-700">Summary</h2>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-brand-700/70">Subtotal</dt>
-              <dd className="font-semibold text-brand-900">
-                <Price cents={subtotalCents} />
-              </dd>
+        {/* Summary rail */}
+        <aside className="h-fit border border-border-grid bg-white lg:sticky lg:top-24">
+          <div className="border-b border-border-grid bg-surface-paper px-space-md py-3">
+            <h2 className="meta-label font-semibold text-on-surface">Order Summary</h2>
+          </div>
+          <div className="flex flex-col gap-4 p-space-md">
+            <dl className="flex flex-col gap-2 font-body-sm">
+              <div className="flex justify-between">
+                <dt className="text-text-muted uppercase tracking-wider font-label-md">Subtotal</dt>
+                <dd className="font-semibold text-on-surface">
+                  <Price cents={subtotalCents} />
+                </dd>
+              </div>
+            </dl>
+            <div className="flex items-center justify-between border-t border-border-grid pt-3">
+              <span className="font-label-md uppercase tracking-widest text-text-muted">Total</span>
+              <Price cents={subtotalCents} className="font-mono text-xl font-bold text-on-surface" />
             </div>
-          </dl>
-          <p className="mt-2 text-xs text-brand-700/60">
-            Taxes and shipping are out of scope for this demo.
-          </p>
-          <button type="button" className="btn-primary mt-4 w-full" onClick={() => navigate('/checkout')}>
-            Go to checkout
-          </button>
-          {!user && (
-            <p className="mt-3 text-xs text-brand-700/60">
-              You're browsing as a guest — you'll sign in at checkout to finish your order. Your
-              cart stays saved in this browser.
+            <button type="button" className="btn-pine w-full" onClick={() => navigate('/checkout')}>
+              <span>Continue to checkout</span>
+              <Icon name="arrow_forward" className="text-sm" />
+            </button>
+            <p className="flex items-start gap-2 border border-border-grid bg-surface-paper p-2.5 font-label-sm uppercase tracking-wide text-text-muted">
+              <Icon name="info" className="shrink-0 text-sm" />
+              <span>Taxes &amp; shipping are out of scope for this demo.</span>
             </p>
-          )}
+            {!user && (
+              <p className="font-body-sm leading-relaxed text-text-muted">
+                You're browsing as a guest — you'll sign in at checkout to finish your order. Your
+                bag stays saved in this browser.
+              </p>
+            )}
+          </div>
         </aside>
       </div>
     </main>
