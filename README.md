@@ -60,12 +60,12 @@ cd backend
 cp .env.example .env       # then edit MONGO_URI to match your instance
 npm install
 npm run seed               # seeds admin + customer users and ≥12 products
-npm run dev                # API on http://127.0.0.1:5000
+npm run dev                # API on http://localhost:5001
 
 # in a second terminal
 cd frontend
 npm install
-npm run dev                # UI on http://127.0.0.1:5173
+npm run dev                # UI on http://localhost:5173
 ```
 
 ### 3.4 Seed logins
@@ -79,7 +79,7 @@ npm run dev                # UI on http://127.0.0.1:5173
 
 ## 4. API route table
 
-Base URL: `http://127.0.0.1:5000`
+Base URL: `http://127.0.0.1:5001`
 
 | Method | Path                       | Auth        | Purpose                                  |
 | ------ | -------------------------- | ----------- | ---------------------------------------- |
