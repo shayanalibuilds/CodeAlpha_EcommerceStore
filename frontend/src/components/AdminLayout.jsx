@@ -32,7 +32,7 @@ export default function AdminLayout({ section = 'Console', children }) {
       <aside className="fixed left-0 top-0 z-40 hidden h-full w-64 flex-col border-r border-border-grid bg-surface-pure md:flex">
         <div className="flex h-16 items-center justify-between border-b border-border-grid px-space-md">
           <Link to="/" className="flex items-center" aria-label="Northwind Market — storefront">
-            <img src="/brand/logo-compact.svg" alt="Northwind Market" className="h-6 w-auto object-contain" />
+            <img src="/brand/logo-tile.svg" alt="Northwind Market" className="h-8 w-8 object-contain" />
           </Link>
           <span className="border border-border-grid px-space-xs py-0.5 font-label-sm text-text-muted">OPS</span>
         </div>

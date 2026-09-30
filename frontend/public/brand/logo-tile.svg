@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Northwind compass tile — mark only, no wordmark (see logo-compact.svg for the lockup) -->
+  <rect width="40" height="40" x="4" y="4" rx="10" fill="#047857"/>
+  <circle cx="24" cy="24" r="12" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <polygon points="24,15 27,24 24,22" fill="#ffffff"/>
+  <polygon points="24,33 21,24 24,26" fill="#A7F3D0"/>
+  <circle cx="24" cy="24" r="2.5" fill="#ffffff"/>
+</svg>

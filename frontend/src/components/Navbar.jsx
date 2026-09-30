@@ -111,12 +111,9 @@ export default function Navbar() {
         className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-6 px-4 md:px-8"
         aria-label="Main navigation"
       >
-        {/* Brand lockup */}
-        <Link to="/" className="flex flex-shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-          <img src="/brand/logo-compact.svg" alt="Northwind Market" className="h-6 w-auto object-contain" />
-          <span className="hidden text-sm font-bold uppercase tracking-wider text-text-primary sm:inline">
-            Northwind Market
-          </span>
+        {/* Brand mark */}
+        <Link to="/" className="flex flex-shrink-0 items-center" onClick={() => setOpen(false)}>
+          <img src="/brand/logo-tile.svg" alt="Northwind Market" className="h-8 w-8 object-contain" />
         </Link>
 
         {/* Architectural search */}

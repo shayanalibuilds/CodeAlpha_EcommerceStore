@@ -9,11 +9,8 @@ export default function Footer() {
         <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand & manifesto */}
           <div className="flex flex-col items-start lg:col-span-4">
-            <div className="mb-6 flex items-center gap-3">
-              <img src="/brand/logo-compact.svg" alt="" className="h-6 w-auto object-contain" />
-              <span className="text-sm font-bold uppercase tracking-wider text-text-primary">
-                Northwind Market
-              </span>
+            <div className="mb-6 flex items-center">
+              <img src="/brand/logo-tile.svg" alt="Northwind Market" className="h-8 w-8 object-contain" />
             </div>
             <p className="mb-6 font-body-sm leading-relaxed text-text-muted">
               A student-run market for quietly useful study goods — books, stationery, bags, audio,
