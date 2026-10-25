@@ -15,7 +15,8 @@ import AdminProductsPage from './pages/AdminProductsPage.jsx';
 import AdminOrdersPage from './pages/AdminOrdersPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
-import { RequireAuth, RequireAdmin } from './components/ProtectedRoute.jsx';
+import { RequireAuth, RequireAdmin, GuestOnly } from './components/ProtectedRoute.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 export default function App() {
   const { pathname } = useLocation();
@@ -27,15 +28,33 @@ export default function App() {
 
   if (isAuthPage) {
     return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
+      <>
+        <ScrollToTop />
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <GuestOnly>
+                <LoginPage />
+              </GuestOnly>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestOnly>
+                <RegisterPage />
+              </GuestOnly>
+            }
+          />
+        </Routes>
+      </>
     );
   }
 
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       {!isAdminPage && <Navbar />}
       <div className={`flex-1 ${isAdminPage ? '' : 'pb-16 md:pb-0'}`}>
         <Routes>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getOrder } from '../api/orders.js';
 import { useApi } from '../hooks/useApi.js';
@@ -5,6 +6,7 @@ import Price from '../components/Price.jsx';
 import Alert from '../components/Alert.jsx';
 import { PageLoader } from '../components/Spinner.jsx';
 import Icon from '../components/Icon.jsx';
+import CancelOrderButton from '../components/CancelOrderButton.jsx';
 import {
   STATUS_LABELS,
   STATUS_CHIP,
@@ -22,6 +24,8 @@ export default function OrderDetailPage() {
   const justOrdered = Boolean(location.state?.justOrdered);
 
   const { data, loading, error, retry } = useApi(() => getOrder(id), [id]);
+  // Holds the order returned by a successful customer cancel.
+  const [cancelledOrder, setCancelledOrder] = useState(null);
 
   if (loading) return <PageLoader label="Loading your receipt…" />;
 
@@ -62,13 +66,13 @@ export default function OrderDetailPage() {
     );
   }
 
-  const order = data.order;
+  const order = cancelledOrder?.id === data.order.id ? cancelledOrder : data.order;
   const cancelled = order.status === 'cancelled';
   const currentStep = TIMELINE.indexOf(order.status);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8 pb-20 md:px-8">
-      {justOrdered && (
+      {justOrdered && !cancelledOrder && (
         <div
           className="mb-6 flex items-start gap-2 border border-accent-pine/40 bg-accent-pine/5 px-space-md py-3 font-body-sm text-tertiary"
           role="status"
@@ -87,7 +91,7 @@ export default function OrderDetailPage() {
           <div>
             <div className="mb-1 flex items-center gap-2">
               <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-              <span className="meta-label">Dispatch Receipt</span>
+              <span className="meta-label">Order Receipt</span>
             </div>
             <h1 className="font-mono font-headline-md text-xl font-semibold tracking-tight text-on-surface">
               {orderNumber(order.id)}
@@ -187,7 +191,14 @@ export default function OrderDetailPage() {
         </div>
       </article>
 
-      <div className="mt-6 flex flex-wrap gap-3">
+      {order.status === 'placed' && (
+        <p className="mt-6 font-body-sm text-text-muted">
+          Changed your mind? You can cancel this order until it is packed.
+        </p>
+      )}
+
+      <div className={`${order.status === 'placed' ? 'mt-3' : 'mt-6'} flex flex-wrap items-start gap-3`}>
+        <CancelOrderButton order={order} onCancelled={setCancelledOrder} />
         <Link to="/orders" className="btn-outline">
           Back to my orders
         </Link>

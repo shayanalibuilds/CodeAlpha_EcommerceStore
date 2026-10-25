@@ -89,7 +89,7 @@ export default function CheckoutPage() {
             </span>
             <span className="text-outline" aria-hidden="true">/</span>
             <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
-              Mocked Ledger
+              Mock payment
             </span>
           </div>
           <h1 className="font-headline-lg tracking-tight text-on-surface">Checkout</h1>
@@ -147,7 +147,7 @@ export default function CheckoutPage() {
               <h2 className="font-label-lg uppercase tracking-wider text-on-surface">
                 <span className="mr-2 font-mono text-accent-pine">SEC 02</span> Payment Method
               </h2>
-              <span className="chip bg-white font-label-sm uppercase text-on-surface-variant">Mock Ledger</span>
+              <span className="chip bg-white font-label-sm uppercase text-on-surface-variant">Mock payment</span>
             </header>
             <div className="p-space-md">
               <p className="mb-3 font-body-sm text-text-muted">
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
         <aside className="h-fit border border-border-grid bg-white lg:sticky lg:top-24">
           <div className="border-b border-border-grid bg-surface-paper px-space-md py-3">
             <h2 className="meta-label font-semibold text-on-surface">
-              Manifest · {count} {count === 1 ? 'item' : 'items'}
+              Order summary · {count} {count === 1 ? 'item' : 'items'}
             </h2>
           </div>
           <ul className="divide-y divide-border-grid">

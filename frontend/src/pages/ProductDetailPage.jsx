@@ -15,7 +15,7 @@ function StockBadge({ stock }) {
     return (
       <span className="inline-flex items-center gap-1.5 border border-border-grid bg-surface-container-highest px-2 py-0.5 font-label-sm uppercase tracking-wider text-secondary">
         <span className="h-1.5 w-1.5 bg-secondary" aria-hidden="true" />
-        Archived / Sold Out
+        Sold out
       </span>
     );
   }
@@ -312,7 +312,7 @@ export default function ProductDetailPage() {
             </h2>
           </div>
           <p className="max-w-md font-body-sm text-on-surface-variant">
-            Every piece in the Northwind archive is selected for durability, safety, and quiet
+            Every piece in the Northwind Market range is selected for durability, safety, and quiet
             everyday utility.
           </p>
         </div>
@@ -335,8 +335,8 @@ export default function ProductDetailPage() {
             {
               icon: 'workspace_premium',
               title: 'Honest Stock Counts',
-              body: 'Low-stock warnings on this page reflect the real database. When an item sells out, it archives until the next restock.',
-              meta: 'INVENTORY LEDGER',
+              body: 'Low-stock warnings on this page reflect the real database. When an item sells out, it is unavailable until the next restock.',
+              meta: 'STOCK',
               value: 'LIVE',
             },
           ].map((c) => (

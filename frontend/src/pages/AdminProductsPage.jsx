@@ -93,11 +93,11 @@ function ProductForm({ initial, onSaved, onCancel }) {
           <div className="mb-1 flex items-center gap-space-xs">
             <span className="inline-block h-2 w-2 bg-accent-pine" aria-hidden="true" />
             <span className="font-label-sm uppercase tracking-widest text-text-muted">
-              {isEdit ? `NODE // EDIT — ${initial.slug.toUpperCase()}` : 'NODE // NEW ARTIFACT'}
+              {isEdit ? `EDIT PRODUCT — ${initial.slug.toUpperCase()}` : 'NEW PRODUCT'}
             </span>
           </div>
           <h2 className="font-headline-md uppercase tracking-tight text-text-primary">
-            {isEdit ? `Edit — ${initial.title}` : 'Register New Artifact'}
+            {isEdit ? `Edit — ${initial.title}` : 'Add a product'}
           </h2>
         </div>
         <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
           </button>
           <button type="submit" className="btn-pine" disabled={busy}>
             <Icon name="sync" className="text-[16px]" />
-            {busy ? 'Saving…' : 'Commit & Sync'}
+            {busy ? 'Saving…' : 'Save'}
           </button>
         </div>
       </header>
@@ -128,11 +128,11 @@ function ProductForm({ initial, onSaved, onCancel }) {
         </header>
         <div className="grid gap-4 p-space-md sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <Field id="p-title" label="Artifact Nomenclature [Title]" error={fields.title}>
+            <Field id="p-title" label="Product name" error={fields.title}>
               <input id="p-title" className="input" value={form.title} onChange={set('title')} placeholder="e.g. Sunrise Spiral Notebook, 3-Pack" required />
             </Field>
           </div>
-          <Field id="p-category" label="Category Node" error={fields.category}>
+          <Field id="p-category" label="Category" error={fields.category}>
             <select id="p-category" className="input" value={form.category} onChange={set('category')}>
               {CATEGORY_KEYS.map((k) => (
                 <option key={k} value={k}>
@@ -141,7 +141,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
               ))}
             </select>
           </Field>
-          <Field id="p-image" label="Plate URL [Image]" error={fields.imageUrl} hint="Leave blank for placeholder art.">
+          <Field id="p-image" label="Image URL" error={fields.imageUrl} hint="Leave blank for placeholder art.">
             <input id="p-image" className="input" value={form.imageUrl} onChange={set('imageUrl')} placeholder="/images/products/placeholder.svg" />
           </Field>
         </div>
@@ -151,7 +151,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
       <section className="mt-space-md border border-border-grid bg-surface-pure">
         <header className="flex items-center justify-between border-b border-border-grid bg-surface-paper px-space-md py-2.5">
           <h3 className="font-label-lg uppercase tracking-wider text-text-primary">
-            <span className="mr-2 font-mono text-accent-pine">SEC 02</span> Curatorial Ledger
+            <span className="mr-2 font-mono text-accent-pine">SEC 02</span> Description
           </h3>
           <Icon name="description" className="text-base text-text-muted" />
         </header>
@@ -166,7 +166,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
       <section className="mt-space-md border border-border-grid bg-surface-pure">
         <header className="flex items-center justify-between border-b border-border-grid bg-surface-paper px-space-md py-2.5">
           <h3 className="font-label-lg uppercase tracking-wider text-text-primary">
-            <span className="mr-2 font-mono text-accent-pine">SEC 03</span> Pricing &amp; Depot
+            <span className="mr-2 font-mono text-accent-pine">SEC 03</span> Price &amp; stock
           </h3>
           <Icon name="payments" className="text-base text-text-muted" />
         </header>
@@ -174,7 +174,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
           <Field id="p-price" label="Base Price (USD)" error={fields.priceCents || fields.price} hint="Stored as integer cents — displayed as USD.">
             <input id="p-price" className="input" inputMode="decimal" value={form.price} onChange={set('price')} placeholder="12.99" required />
           </Field>
-          <Field id="p-stock" label="Depot Units [Stock]" error={fields.stock}>
+          <Field id="p-stock" label="Stock" error={fields.stock}>
             <input id="p-stock" className="input" inputMode="numeric" value={form.stock} onChange={set('stock')} placeholder="25" required />
           </Field>
         </div>
@@ -192,7 +192,7 @@ function ProductForm({ initial, onSaved, onCancel }) {
           </button>
           <button type="submit" className="btn-pine flex-1 sm:flex-none" disabled={busy}>
             <Icon name="sync" className="text-[16px]" />
-            {busy ? 'Saving…' : 'Commit & Sync'}
+            {busy ? 'Saving…' : 'Save'}
           </button>
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function AdminProductsPage() {
   if (loading && tick === 0)
     return (
       <AdminLayout section="Products">
-        <PageLoader label="Loading artifacts…" />
+        <PageLoader label="Loading products…" />
       </AdminLayout>
     );
 
@@ -298,18 +298,17 @@ export default function AdminProductsPage() {
           <div className="mt-space-sm flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
             <div className="max-w-2xl">
               <h1 className="font-headline-lg uppercase tracking-tight text-text-primary">
-                Product Repertoire
+                Products
               </h1>
               <p className="mt-space-xs font-body-md text-text-muted">
-                Curated catalog records with live stock verification across the student-run
-                depot.
+                Add, edit and hide products. Stock levels come straight from the database.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-space-xs">
               {editing === null && (
                 <button type="button" className="btn-primary" onClick={() => setEditing('new')}>
                   <Icon name="add" className="text-[18px]" />
-                  New Artifact
+                  New product
                 </button>
               )}
             </div>
@@ -319,7 +318,7 @@ export default function AdminProductsPage() {
         {/* KPI strip */}
         <section className="mt-space-lg grid grid-cols-1 gap-px border border-border-grid bg-border-grid sm:grid-cols-2 xl:grid-cols-4">
           <div className="flex flex-col justify-between bg-surface-pure p-space-md">
-            <div className="font-label-sm uppercase tracking-wider text-text-muted">Total Artifacts</div>
+            <div className="font-label-sm uppercase tracking-wider text-text-muted">Total products</div>
             <div className="mt-space-xs flex items-baseline justify-between">
               <span className="font-headline-md font-semibold text-text-primary">{stats.total}</span>
               <span className="font-label-sm uppercase tracking-widest text-accent-pine">
@@ -346,7 +345,7 @@ export default function AdminProductsPage() {
             </div>
           </div>
           <div className="flex flex-col justify-between bg-surface-pure p-space-md">
-            <div className="font-label-sm uppercase tracking-wider text-text-muted">Depot Value</div>
+            <div className="font-label-sm uppercase tracking-wider text-text-muted">Stock value</div>
             <div className="mt-space-xs flex items-baseline justify-between">
               <span className="font-headline-md font-semibold text-text-primary">
                 ${stats.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -379,7 +378,7 @@ export default function AdminProductsPage() {
               initial={editing === 'new' ? null : editing}
               onSaved={() => {
                 setEditing(null);
-                setNotice('Artifact committed & synced.');
+                setNotice('Product saved.');
                 refresh();
               }}
               onCancel={() => setEditing(null)}
@@ -398,8 +397,8 @@ export default function AdminProductsPage() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="h-10 w-full border border-border-grid bg-surface-pure pl-9 pr-3 font-body-sm text-text-primary placeholder:text-text-muted focus:border-accent-pine focus:outline-none"
-                    placeholder="FILTER BY ARTIFACT, REF OR CATEGORY..."
-                    aria-label="Filter artifacts"
+                    placeholder="FILTER BY NAME OR CATEGORY..."
+                    aria-label="Filter products"
                   />
                 </div>
               </div>
@@ -414,7 +413,7 @@ export default function AdminProductsPage() {
               <table className="w-full min-w-[820px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border-strong bg-surface-paper font-label-md uppercase tracking-widest text-text-muted">
-                    <th className="w-[30%] px-space-md py-3.5 font-medium">Artifact / Ref</th>
+                    <th className="w-[30%] px-space-md py-3.5 font-medium">Product</th>
                     <th className="px-space-md py-3.5 font-medium">Category</th>
                     <th className="px-space-md py-3.5 text-right font-medium">Retail Price</th>
                     <th className="px-space-md py-3.5 font-medium">Stock &amp; Status</th>
@@ -484,7 +483,7 @@ export default function AdminProductsPage() {
                               disabled={rowBusy === p.id}
                               className="px-1 transition-colors hover:text-error hover:underline"
                             >
-                              De-list
+                              Hide
                             </button>
                           )}
                         </div>
@@ -494,7 +493,7 @@ export default function AdminProductsPage() {
                   {filtered.length === 0 && (
                     <tr>
                       <td colSpan="5" className="px-space-md py-10 text-center font-label-md uppercase tracking-wider text-text-muted">
-                        {items.length === 0 ? 'No artifacts yet — register the first one.' : 'No artifacts match the filter.'}
+                        {items.length === 0 ? 'No products yet. Add the first one.' : 'No products match the filter.'}
                       </td>
                     </tr>
                   )}

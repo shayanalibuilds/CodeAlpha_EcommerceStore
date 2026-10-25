@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import AuthLayout from '../components/AuthLayout.jsx';
+import { nextPath } from '../components/ProtectedRoute.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
 import Icon from '../components/Icon.jsx';
@@ -10,7 +11,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const next = location.state?.next || '/';
+  const next = nextPath(location);
 
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [fields, setFields] = useState({});
@@ -41,13 +42,13 @@ export default function RegisterPage() {
       <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         {error && <Alert>{error}</Alert>}
 
-        <Field id="name" label="Curator Name" error={fields.name}>
+        <Field id="name" label="Full name" error={fields.name}>
           <input
             id="name"
             type="text"
             autoComplete="name"
             className="input"
-            placeholder="e.g. V. Sterling"
+            placeholder="e.g. Ayesha Khan"
             value={form.name}
             onChange={set('name')}
             required
@@ -79,7 +80,7 @@ export default function RegisterPage() {
               type={show ? 'text' : 'password'}
               autoComplete="new-password"
               className="input pr-14"
-              placeholder="Min. 8 characters / mixed entropy"
+              placeholder="At least 8 characters"
               value={form.password}
               onChange={set('password')}
               required

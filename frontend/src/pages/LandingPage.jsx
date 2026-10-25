@@ -62,7 +62,7 @@ export default function LandingPage() {
             <span>Student-run demo market — payments are mocked</span>
           </div>
           <span className="hidden font-mono sm:inline">Curated Nordic Study Goods</span>
-          <span className="hidden lg:inline">AUTUMN / WINTER 2026 ARCHIVE</span>
+          <span className="hidden lg:inline">AUTUMN / WINTER 2026 COLLECTION</span>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export default function LandingPage() {
           <div className="divide-y divide-border-grid border border-border-grid bg-white lg:col-span-7">
             {loading && (
               <div className="p-8 font-label-md uppercase tracking-widest text-text-muted">
-                Loading the archive…
+                Loading products…
               </div>
             )}
             {!loading && error && (
@@ -158,7 +158,7 @@ export default function LandingPage() {
                         <div>
                           <Price cents={lead.priceCents} className="font-mono text-xl font-bold text-text-primary" />
                           <div className="text-[10px] uppercase tracking-wider text-text-muted">
-                            {lead.stock > 0 ? `In Stock · ${lead.stock} units` : 'Archived'}
+                            {lead.stock > 0 ? `In Stock · ${lead.stock} units` : 'Sold out'}
                           </div>
                         </div>
                         <Link
@@ -279,7 +279,7 @@ export default function LandingPage() {
         <div className="mb-10 flex flex-col justify-between gap-6 border-b border-border-grid pb-6 md:flex-row md:items-end">
           <div>
             <div className="mb-2 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-text-muted">
-              <span className="font-semibold text-accent-pine">Seasonal Archive</span>
+              <span className="font-semibold text-accent-pine">Shop by category</span>
               <span>/</span>
               <span>Autumn Winter 2026</span>
             </div>
@@ -293,9 +293,9 @@ export default function LandingPage() {
               to="/products"
               className="px-4 py-2 transition-colors hover:bg-text-primary hover:text-white"
             >
-              All Archive
+              All
             </Link>
-            {CATEGORY_KEYS.slice(0, 4).map((key) => (
+            {CATEGORY_KEYS.map((key) => (
               <Link
                 key={key}
                 to={`/products?category=${key}`}
@@ -310,17 +310,17 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {loading && (
             <div className="col-span-full py-10 text-center font-label-md uppercase tracking-widest text-text-muted">
-              Loading curated pieces…
+              Loading products…
             </div>
           )}
           {!loading && error && (
             <div className="col-span-full">
-              <Alert onRetry={retry}>Could not load curated pieces: {error.message}</Alert>
+              <Alert onRetry={retry}>Could not load products: {error.message}</Alert>
             </div>
           )}
           {!loading && !error && curated.length === 0 && (
             <div className="col-span-full border border-border-grid p-10 text-center font-label-md uppercase tracking-widest text-text-muted">
-              The archive is being restocked.
+              New stock is on the way.
             </div>
           )}
           {curated.map((p) => (
@@ -389,27 +389,6 @@ export default function LandingPage() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Design philosophy quote */}
-      <section className="mx-auto w-full max-w-[1440px] px-4 py-24 md:px-8">
-        <div className="relative border-y border-border-grid bg-white px-6 py-16 text-center md:px-16">
-          <div className="mx-auto flex max-w-3xl flex-col items-center">
-            <span className="mb-4 font-mono text-xs uppercase tracking-widest text-accent-pine">
-              Design Philosophy
-            </span>
-            <blockquote className="mb-8 text-2xl font-bold uppercase leading-tight tracking-tight text-text-primary sm:text-4xl">
-              “Simplicity is the deliberate elimination of the unnecessary.”
-            </blockquote>
-            <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-wider text-text-muted">
-              <span className="h-px w-8 bg-border-grid" aria-hidden="true" />
-              <span className="font-bold text-text-primary">O. Lindqvist</span>
-              <span aria-hidden="true">//</span>
-              <span>Head of Product Architecture</span>
-              <span className="h-px w-8 bg-border-grid" aria-hidden="true" />
-            </div>
-          </div>
         </div>
       </section>
     </main>

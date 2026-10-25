@@ -35,7 +35,12 @@ export const list = wrap(async (req, res) => {
     filter.$or = [{ title: rx }, { description: rx }];
   }
 
-  const sortSpec = sort === 'price' ? { priceCents: 1, _id: 1 } : { createdAt: -1, _id: -1 };
+  // sort=price (low → high), sort=price_desc (high → low), anything else = newest first.
+  const SORTS = {
+    price: { priceCents: 1, _id: 1 },
+    price_desc: { priceCents: -1, _id: -1 },
+  };
+  const sortSpec = SORTS[sort] || { createdAt: -1, _id: -1 };
   const items = await Product.find(filter).sort(sortSpec).limit(200).lean();
 
   res.json({ items: items.map(toPublicProduct), count: items.length, total });
