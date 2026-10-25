@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import AuthLayout from '../components/AuthLayout.jsx';
+import { nextPath } from '../components/ProtectedRoute.jsx';
 import Field from '../components/Field.jsx';
 import Alert from '../components/Alert.jsx';
 import Icon from '../components/Icon.jsx';
@@ -42,7 +43,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const next = location.state?.next || '/';
+  const next = nextPath(location);
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [fields, setFields] = useState({});
