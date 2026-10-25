@@ -4,7 +4,7 @@ import { CATEGORY_LABELS } from './categories.js';
 
 /**
  * Destructive-action confirmation modal — architectural port of the designer's
- * "De-list Artifact" dialog (05 / 13). Wired to the real archive/restore API:
+ * "Hide product" dialog (05 / 13). Wired to the real archive/restore API:
  * the operator must type ARCHIVE-<SLUG> (or RESTORE-<SLUG>) to unlock the
  * commit button.
  */
@@ -53,7 +53,7 @@ export default function ArchiveModal({ product, mode = 'archive', busy, onConfir
               </span>
             </div>
             <h2 id="archive-modal-title" className="mt-1 font-headline-md tracking-tight text-text-primary">
-              {archiving ? 'De-list this artifact?' : 'Restore this artifact to the catalog?'}
+              {archiving ? 'Hide this product?' : 'Restore this product to the catalog?'}
             </h2>
           </div>
           <button
@@ -88,7 +88,7 @@ export default function ArchiveModal({ product, mode = 'archive', busy, onConfir
               </span>
             </div>
             <div className="flex flex-col p-space-sm">
-              <span className="font-label-sm uppercase text-text-muted">Category Node</span>
+              <span className="font-label-sm uppercase text-text-muted">Category</span>
               <span className="mt-0.5 text-body-sm text-text-primary">
                 {CATEGORY_LABELS[product.category] || product.category}
               </span>
@@ -114,10 +114,10 @@ export default function ArchiveModal({ product, mode = 'archive', busy, onConfir
               </span>
               <p className="mt-1 font-body-sm leading-normal text-text-muted">
                 <span className="font-mono font-semibold text-text-primary">{product.stock} units</span>{' '}
-                currently remain in the digital depot.{' '}
+                currently remain in the store.{' '}
                 {archiving
-                  ? 'Customers will no longer see or order this artifact.'
-                  : 'Customers will see and order this artifact again.'}{' '}
+                  ? 'Customers will no longer see or order this product.'
+                  : 'Customers will see and order this product again.'}{' '}
                 Stock levels are not modified by this action.
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function ArchiveModal({ product, mode = 'archive', busy, onConfir
             >
               <span className="flex items-center justify-center gap-2">
                 <Icon name={archiving ? 'inventory' : 'publish'} className="text-[16px]" />
-                {busy ? 'Working…' : archiving ? 'Archive artifact' : 'Restore artifact'}
+                {busy ? 'Working…' : archiving ? 'Hide product' : 'Restore product'}
               </span>
             </button>
           </div>
