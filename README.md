@@ -149,3 +149,6 @@ CodeAlpha_EcommerceStore/
 ## 8. Disclaimer
 
 This project is a student internship demo for CodeAlpha. There is **no real payment processing** — checkout is a mock that always succeeds when stock is available. Do not enter real card numbers; any card-shaped string is accepted by the mock.
+
+
+> **Note (arm64 Linux):** if the in-memory MongoDB used by the tests fails to download, run `MONGOMS_DISTRO=ubuntu-22.04 npm test`.
