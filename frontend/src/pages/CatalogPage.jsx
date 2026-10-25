@@ -43,12 +43,12 @@ export default function CatalogPage() {
   };
 
   const { data, loading, error, retry } = useApi(
-    () => listProducts({ q, category: category || undefined, sort: sort === 'price' ? 'price' : undefined }),
+    () => listProducts({ q, category: category || undefined, sort: sort === 'price' || sort === 'price_desc' ? sort : undefined }),
     [q, category, sort]
   );
 
   const items = data?.items || [];
-  // Whole-catalog size from the server — the "All Pieces" counter and the
+  // Whole-catalog size from the server — the "All products" counter and the
   // repertoire pill describe the entire shop and must not shrink when a
   // search or category filter narrows the grid below.
   const total = data?.total ?? items.length;
@@ -94,7 +94,7 @@ export default function CatalogPage() {
           <div className="flex flex-wrap items-center gap-4 self-start md:self-auto">
             {/* Count metric pill */}
             <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
-              <span className="font-label-md text-on-surface-variant">CATALOG REPERTOIRE:</span>
+              <span className="font-label-md text-on-surface-variant">CATALOG:</span>
               <span className="font-label-md font-semibold text-accent-pine">
                 {loading ? '—' : total} / ITEMS AVAILABLE
               </span>
@@ -110,9 +110,9 @@ export default function CatalogPage() {
                 aria-label="Sort products"
               >
                 <option value="newest">Sort: Newest</option>
-                <option value="price">Sort: Price</option>
+                <option value="price">Sort: Price, low to high</option>
+                <option value="price_desc">Sort: Price, high to low</option>
               </select>
-              <Icon name="expand_more" className="text-sm text-outline" />
             </label>
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function CatalogPage() {
                 : 'border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
             }`}
           >
-            <span>All Pieces</span>
+            <span>All products</span>
             <span className="font-label-sm text-label-sm opacity-60">({loading ? '—' : total})</span>
           </button>
           {CHIPS.map(([key, label]) => (
@@ -176,7 +176,7 @@ export default function CatalogPage() {
               No products match
             </h2>
             <p className="mt-space-xs max-w-md font-body-sm text-body-sm text-text-muted">
-              Try a different search term or clear the filters to see the full archive.
+              Try a different search term or clear the filters to see the full catalog.
             </p>
             {hasFilters && (
               <button
