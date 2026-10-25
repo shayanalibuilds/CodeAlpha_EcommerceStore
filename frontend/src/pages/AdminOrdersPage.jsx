@@ -19,9 +19,9 @@ import {
 
 const FILTERS = [
   { value: '', label: 'All Orders' },
-  { value: 'placed', label: 'Pending Fulfillment' },
+  { value: 'placed', label: 'To pack' },
   { value: 'packed', label: 'Packed' },
-  { value: 'shipped', label: 'Dispatched' },
+  { value: 'shipped', label: 'Shipped' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
@@ -83,7 +83,7 @@ export default function AdminOrdersPage() {
   if (loading && tick === 0)
     return (
       <AdminLayout section="Orders">
-        <PageLoader label="Loading dispatch telemetry…" />
+        <PageLoader label="Loading orders…" />
       </AdminLayout>
     );
 
@@ -95,7 +95,7 @@ export default function AdminOrdersPage() {
           <div className="flex flex-col">
             <div className="flex items-center gap-space-xs font-label-sm uppercase tracking-widest text-accent-pine">
               <span className="inline-block h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-              <span>Admin // Order Operations</span>
+              <span>Admin / Orders</span>
             </div>
             <h1 className="mt-1 font-headline-md uppercase tracking-tight text-text-primary">
               Orders &amp; Fulfillment
@@ -104,7 +104,7 @@ export default function AdminOrdersPage() {
           <div className="flex flex-wrap items-center gap-2">
             <Link to="/admin/products" className="btn-outline !px-space-md !py-2">
               <Icon name="inventory_2" className="text-[16px]" />
-              Artifact Console
+              Products
             </Link>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function AdminOrdersPage() {
       <div className="grid grid-cols-1 gap-px border-b border-border-grid bg-border-grid md:grid-cols-2 xl:grid-cols-4">
         <div className="flex flex-col justify-between bg-surface-pure p-space-lg">
           <div className="flex items-center justify-between text-text-muted">
-            <span className="font-label-sm uppercase tracking-widest">Gross Volume // Ledger</span>
+            <span className="font-label-sm uppercase tracking-widest">Revenue (mock)</span>
             <Icon name="payments" className="text-[18px]" />
           </div>
           <div className="my-space-md">
@@ -150,7 +150,7 @@ export default function AdminOrdersPage() {
             </div>
             <div className="mt-1 flex items-center gap-1 font-label-sm uppercase text-accent-pine">
               <Icon name="trending_up" className="text-[14px]" />
-              <span>{stats.units} units moved (mock ledger)</span>
+              <span>{stats.units} items sold</span>
             </div>
           </div>
           <div className="h-1 w-full bg-surface-container-high">
@@ -159,19 +159,19 @@ export default function AdminOrdersPage() {
         </div>
         <div className="flex flex-col justify-between bg-surface-pure p-space-lg">
           <div className="flex items-center justify-between text-text-muted">
-            <span className="font-label-sm uppercase tracking-widest">Active Shipments</span>
+            <span className="font-label-sm uppercase tracking-widest">Shipped orders</span>
             <Icon name="local_shipping" className="text-[18px]" />
           </div>
           <div className="my-space-md">
-            <div className="font-headline-lg font-semibold tracking-tight text-text-primary">{counts.shipped} Transit</div>
+            <div className="font-headline-lg font-semibold tracking-tight text-text-primary">{counts.shipped} shipped</div>
             <div className="mt-1 flex items-center gap-1 font-label-sm uppercase text-text-muted">
               <span className="inline-block h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
-              <span>{counts.packed} packed &amp; staged</span>
+              <span>{counts.packed} packed, ready to ship</span>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-border-grid pt-2 font-label-sm text-text-muted">
-            <span>Fulfillment Queue</span>
-            <span className="font-semibold text-text-primary">{counts.placed} AWAITING PACK</span>
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-border-grid pt-2 font-label-sm text-text-muted">
+            <span>Waiting to pack</span>
+            <span className="font-semibold text-text-primary">{counts.placed} orders</span>
           </div>
         </div>
         <div className="flex flex-col justify-between bg-surface-pure p-space-lg">
@@ -187,27 +187,27 @@ export default function AdminOrdersPage() {
             </div>
             <div className="mt-1 flex items-center gap-1 font-label-sm uppercase text-accent-pine">
               <Icon name="bolt" className="text-[14px]" />
-              <span>Across {all.filter((o) => o.status !== 'cancelled').length} active orders</span>
+              <span>Across {all.filter((o) => o.status !== 'cancelled').length} orders (excl. cancelled)</span>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-border-grid pt-2 font-label-sm text-text-muted">
-            <span>Status Flow</span>
-            <span className="font-semibold text-text-primary">Placed→Packed→Shipped</span>
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-border-grid pt-2 font-label-sm text-text-muted">
+            <span>Order steps</span>
+            <span className="font-semibold text-text-primary">Placed → Packed → Shipped</span>
           </div>
         </div>
         <div className="flex flex-col justify-between bg-surface-pure p-space-lg">
           <div className="flex items-center justify-between text-text-muted">
-            <span className="font-label-sm uppercase tracking-widest">Cancellation Ratio</span>
+            <span className="font-label-sm uppercase tracking-widest">Cancellation rate</span>
             <Icon name="cached" className="text-[18px]" />
           </div>
           <div className="my-space-md">
             <div className="font-headline-lg font-semibold tracking-tight text-text-primary">{stats.rate}%</div>
             <div className="mt-1 flex items-center gap-1 font-label-sm uppercase text-text-muted">
-              <span>{counts.cancelled} orders returned to stock</span>
+              <span>{counts.cancelled} cancelled orders</span>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-border-grid pt-2 font-label-sm text-text-muted">
-            <span>Cancelled Stock</span>
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-border-grid pt-2 font-label-sm text-text-muted">
+            <span>Stock</span>
             <span className="font-semibold text-accent-pine">Restocked automatically</span>
           </div>
         </div>
@@ -222,15 +222,15 @@ export default function AdminOrdersPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="h-10 w-full border border-border-grid bg-surface-pure pl-9 pr-3 font-body-sm text-text-primary placeholder:text-text-muted focus:border-accent-pine focus:outline-none"
-              placeholder="FILTER BY ORDER ID, RECIPIENT OR EMAIL..."
+              placeholder="Search by order number, name, or email"
               aria-label="Filter orders"
             />
           </div>
         </div>
         <span className="flex items-center gap-3 self-end font-label-sm uppercase text-text-muted md:self-auto">
-          Rendering {orders.length} of {all.length} records
+          Showing {orders.length} of {all.length} orders
           <span className="h-4 w-px bg-border-grid" aria-hidden="true" />
-          <span className="font-semibold text-text-primary">Refreshes on every action</span>
+          <span className="font-semibold text-text-primary">Updates after every change</span>
         </span>
       </div>
 
@@ -241,68 +241,63 @@ export default function AdminOrdersPage() {
         {rowError && <Alert>{rowError}</Alert>}
       </div>
 
-      {/* Orders data table */}
+      {/* Orders table — five compact columns so Status & Actions stay on screen
+          at 1280px (sidebar included); horizontal scroll only on small screens. */}
       <div className="w-full overflow-x-auto bg-surface-pure px-space-md pb-space-lg md:px-space-lg">
-        <table className="w-full min-w-[880px] border-collapse border border-border-grid text-left">
+        <table className="w-full min-w-[720px] table-fixed border-collapse border border-border-grid text-left lg:min-w-0">
+          <colgroup>
+            <col className="w-[17%]" />
+            <col className="w-[22%]" />
+            <col className="w-[25%]" />
+            <col className="w-[13%]" />
+            <col className="w-[23%]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-border-strong bg-surface-paper font-label-md uppercase tracking-wider text-text-muted">
-              <th className="px-space-md py-space-sm font-semibold text-text-primary">Order ID &amp; Time</th>
-              <th className="px-space-md py-space-sm font-semibold text-text-primary">Customer</th>
-              <th className="px-space-md py-space-sm font-semibold text-text-primary">Items Manifest</th>
-              <th className="px-space-md py-space-sm text-right font-semibold text-text-primary">Value</th>
-              <th className="px-space-md py-space-sm font-semibold text-text-primary">Payment</th>
-              <th className="px-space-md py-space-sm font-semibold text-text-primary">Status</th>
-              <th className="px-space-md py-space-sm text-right font-semibold text-text-primary">Actions</th>
+              <th className="px-3 py-space-sm font-semibold text-text-primary">Order</th>
+              <th className="px-3 py-space-sm font-semibold text-text-primary">Customer</th>
+              <th className="px-3 py-space-sm font-semibold text-text-primary">Items</th>
+              <th className="px-3 py-space-sm text-right font-semibold text-text-primary">Total</th>
+              <th className="px-3 py-space-sm font-semibold text-text-primary">Status &amp; actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-grid font-body-sm text-text-primary">
+          <tbody className="divide-y divide-border-grid align-top font-body-sm text-text-primary">
             {orders.map((o) => (
               <tr key={o.id} className="group transition-colors hover:bg-surface-container-low">
-                <td className="whitespace-nowrap px-space-md py-space-md">
-                  <div className="flex items-center gap-2">
-                    <Link to={`/orders/${o.id}`} className="font-label-lg font-semibold uppercase text-text-primary hover:text-accent-pine">
-                      {orderNumber(o.id)}
-                    </Link>
-                  </div>
-                  <div className="mt-0.5 flex items-center gap-1 font-label-sm text-text-muted">
-                    <Icon name="schedule" className="text-[13px]" />
-                    {timeAgo(o.createdAt)} // {formatDate(o.createdAt)}
-                  </div>
+                <td className="px-3 py-space-md">
+                  <Link to={`/orders/${o.id}`} className="font-label-lg font-semibold uppercase text-text-primary hover:text-accent-pine">
+                    {orderNumber(o.id)}
+                  </Link>
+                  <div className="mt-0.5 font-label-sm text-text-muted">{formatDate(o.createdAt)}</div>
+                  <div className="font-label-sm text-text-muted">{timeAgo(o.createdAt)}</div>
                 </td>
-                <td className="px-space-md py-space-md">
-                  <div className="font-body-md font-medium text-text-primary">{o.user?.name || '—'}</div>
-                  <div className="mt-0.5 font-label-sm uppercase tracking-wide text-text-muted">{o.user?.email || ''}</div>
+                <td className="px-3 py-space-md">
+                  <div className="break-words font-body-md font-medium text-text-primary">{o.user?.name || '—'}</div>
+                  <div className="mt-0.5 break-all font-label-sm text-text-muted">{o.user?.email || ''}</div>
                 </td>
-                <td className="max-w-xs px-space-md py-space-md">
-                  <div className="truncate font-medium text-text-primary">
+                <td className="px-3 py-space-md">
+                  <div className="truncate font-medium text-text-primary" title={o.items[0]?.title}>
                     {o.items[0] ? `${o.items[0].qty}× ${o.items[0].title}` : '—'}
                   </div>
                   {o.items.length > 1 && (
                     <div className="truncate text-body-sm text-text-muted">
-                      + {o.items.slice(1).reduce((s, i) => s + i.qty, 0)} more units
+                      + {o.items.slice(1).reduce((s, i) => s + i.qty, 0)} more
                     </div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-space-md py-space-md text-right">
+                <td className="px-3 py-space-md text-right">
                   <div className="font-label-lg font-semibold text-text-primary">
                     <Price cents={o.totalCents} />
                   </div>
-                  <div className="font-label-sm text-text-muted">{o.items.reduce((s, i) => s + i.qty, 0)} units</div>
+                  <div className="font-label-sm text-text-muted">{o.items.reduce((s, i) => s + i.qty, 0)} items</div>
+                  <div className="mt-0.5 font-label-sm text-text-muted">{PAYMENT_LABELS[o.paymentMethod] || o.paymentMethod}</div>
                 </td>
-                <td className="whitespace-nowrap px-space-md py-space-md">
-                  <div className="inline-flex items-center gap-1 border border-border-grid bg-surface-paper px-2 py-1 font-label-sm uppercase tracking-wide text-text-primary">
-                    <Icon name="payments" className="text-[14px] text-text-muted" />
-                    {PAYMENT_LABELS[o.paymentMethod] || o.paymentMethod}
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-space-md py-space-md">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 font-label-sm font-semibold uppercase ${STATUS_CHIP[o.status]}`}>
+                <td className="px-3 py-space-md">
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 font-label-sm font-semibold uppercase ${STATUS_CHIP[o.status]}`}>
                     <Icon name={STATUS_ICON[o.status]} className="text-[14px]" />
                     {STATUS_LABELS[o.status]}
                   </span>
-                </td>
-                <td className="whitespace-nowrap px-space-md py-space-md text-right">
-                  <div className="flex items-center justify-end gap-1">
+                  <div className="mt-2 flex flex-wrap items-center gap-1">
                     {o.status === 'placed' && (
                       <button
                         type="button"
@@ -326,13 +321,11 @@ export default function AdminOrdersPage() {
                     {(o.status === 'placed' || o.status === 'packed') && (
                       <button
                         type="button"
-                        title="Cancel Order"
-                        className="border border-border-grid p-1.5 text-text-muted transition-colors hover:border-error hover:text-error disabled:opacity-40"
+                        className="border border-border-grid px-2.5 py-1.5 font-label-sm uppercase tracking-wider text-text-muted transition-colors hover:border-error hover:text-error disabled:opacity-40"
                         disabled={busyId === o.id}
                         onClick={() => setStatus(o, 'cancelled', 'Cancel this order? Items will return to stock.')}
                       >
-                        <Icon name="close" className="text-[16px]" />
-                        <span className="sr-only">Cancel order</span>
+                        Cancel
                       </button>
                     )}
                     {(o.status === 'shipped' || o.status === 'cancelled') && (
@@ -344,7 +337,7 @@ export default function AdminOrdersPage() {
             ))}
             {orders.length === 0 && (
               <tr>
-                <td colSpan="7" className="px-space-md py-10 text-center font-label-md uppercase tracking-wider text-text-muted">
+                <td colSpan="5" className="px-space-md py-10 text-center font-label-md uppercase tracking-wider text-text-muted">
                   No orders {filter ? `with status "${STATUS_LABELS[filter] || filter}"` : 'yet'}.
                 </td>
               </tr>
