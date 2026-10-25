@@ -10,7 +10,7 @@ import { PageLoader } from '../components/Spinner.jsx';
 import Icon from '../components/Icon.jsx';
 
 export default function CartPage() {
-  const { items, subtotalCents, count, loading, updateQty, remove } = useCart();
+  const { items, subtotalCents, count, loading, updateQty, remove, mergeNotice, dismissMergeNotice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
@@ -42,9 +42,18 @@ export default function CartPage() {
 
   if (loading) return <PageLoader label="Loading your bag…" />;
 
+  const mergeNoticeBlock = mergeNotice ? (
+    <div className="mt-4">
+      <Alert tone="info" onDismiss={dismissMergeNotice}>
+        Bag merged: {mergeNotice}
+      </Alert>
+    </div>
+  ) : null;
+
   if (items.length === 0) {
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
+        {mergeNoticeBlock}
         <EmptyState
           icon="shopping_bag"
           title="Your bag is empty"
@@ -90,6 +99,7 @@ export default function CartPage() {
           <Alert>{error}</Alert>
         </div>
       )}
+      {mergeNoticeBlock}
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         {/* Line items */}
@@ -125,6 +135,7 @@ export default function CartPage() {
                     type="button"
                     onClick={() => onRemove(item.productId)}
                     disabled={pendingId === item.productId}
+                    aria-label={`Remove ${item.title} from bag`}
                     className="btn-ghost !px-1.5 hover:!text-error"
                   >
                     <Icon name="delete" className="text-base" />

@@ -37,6 +37,11 @@ app.use((err, req, res, next) => {
   if (err?.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'Request body must be valid JSON.' });
   }
+  // Safety net: a Mongoose CastError means a bad id reached a query — that is
+  // a client mistake (400), never a server fault (500).
+  if (err?.name === 'CastError') {
+    return res.status(400).json({ error: 'That id does not look right.' });
+  }
   if (err instanceof HttpError || (err && typeof err.status === 'number' && err.status >= 400 && err.status < 600)) {
     const body = { error: err.message || 'Request failed.' };
     if (err.fields) body.fields = err.fields;

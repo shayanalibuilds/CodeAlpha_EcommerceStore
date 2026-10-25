@@ -117,6 +117,11 @@ export const updateItem = wrap(async (req, res) => {
 
 export const removeItem = wrap(async (req, res) => {
   const { productId } = req.params;
+  // Same guard as updateItem: a non-ObjectId must 404 like any missing item,
+  // never surface as a Mongoose CastError 500.
+  if (!OBJECT_ID.test(productId)) {
+    throw new HttpError(404, 'That item is not in your cart.');
+  }
   await Cart.updateOne({ user: req.user.id }, { $pull: { items: { product: productId } } });
   res.json({ cart: await cartResponse(req.user.id) });
 });

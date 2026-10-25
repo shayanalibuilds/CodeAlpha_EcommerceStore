@@ -164,6 +164,25 @@ describe('DELETE /api/cart/items/:productId', () => {
     expect(res.body.cart.count).toBe(0);
     expect(res.body.cart.subtotalCents).toBe(0);
   });
+
+  it('404s for a malformed product id instead of 500 (#9)', async () => {
+    const { token } = await createCustomer();
+    await seedProducts();
+
+    const res = await authed(token).delete('/api/cart/items/abc');
+    expect(res.status).toBe(404);
+    expect(res.body.error).toMatch(/cart/i);
+  });
+
+  it('200s for a well-formed id that is simply not in the cart', async () => {
+    const { token } = await createCustomer();
+    const products = await seedProducts();
+    const notes = products.find((p) => p.slug === 'pastel-sticky-notes')._id.toString();
+
+    const res = await authed(token).delete(`/api/cart/items/${notes}`);
+    expect(res.status).toBe(200);
+    expect(res.body.cart.count).toBe(0);
+  });
 });
 
 describe('cart persistence per user', () => {

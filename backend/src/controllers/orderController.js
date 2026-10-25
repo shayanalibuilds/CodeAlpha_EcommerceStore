@@ -71,22 +71,33 @@ export const updateStatus = wrap(async (req, res) => {
   const { status } = req.body;
   if (!OBJECT_ID.test(id)) throw new HttpError(404, 'Order not found.');
 
-  const order = await Order.findById(id);
-  if (!order) throw new HttpError(404, 'Order not found.');
-
-  if (status !== order.status) {
-    const allowed = TRANSITIONS[order.status] || [];
-    if (!allowed.includes(status)) {
-      throw new HttpError(400, `Cannot move an order from "${order.status}" to "${status}".`, {
-        status: allowed.length
-          ? `From "${order.status}" you can go to: ${allowed.join(', ')}.`
-          : `An order that is "${order.status}" cannot change status.`,
-      });
-    }
-    order.status = status;
-    await order.save();
-    if (status === 'cancelled') await restockOrder(order);
+  // Claim the transition with ONE conditional update: only the request that
+  // moves the order out of an allowed origin state wins. Concurrent duplicate
+  // cancels can never both restock — the losers match nothing, re-read the
+  // fresh status, and fall through to the idempotent no-op or the 400 below.
+  const allowedFrom = Object.keys(TRANSITIONS).filter((s) => TRANSITIONS[s].includes(status));
+  const updated = await Order.findOneAndUpdate(
+    { _id: id, status: { $in: allowedFrom } },
+    { $set: { status } },
+    { new: true }
+  );
+  if (updated) {
+    // Exactly this request flipped the status, so it owns the side effect.
+    if (status === 'cancelled') await restockOrder(updated);
+    return res.json({ order: toPublicOrder(updated.toObject()) });
   }
 
-  res.json({ order: toPublicOrder(order.toObject()) });
+  // Nothing matched: the order is missing, already in the requested state
+  // (idempotent no-op), or the transition is not allowed.
+  const order = await Order.findById(id).lean();
+  if (!order) throw new HttpError(404, 'Order not found.');
+  if (order.status === status) {
+    return res.json({ order: toPublicOrder(order) });
+  }
+  const allowed = TRANSITIONS[order.status] || [];
+  throw new HttpError(400, `Cannot move an order from "${order.status}" to "${status}".`, {
+    status: allowed.length
+      ? `From "${order.status}" you can go to: ${allowed.join(', ')}.`
+      : `An order that is "${order.status}" cannot change status.`,
+  });
 });
