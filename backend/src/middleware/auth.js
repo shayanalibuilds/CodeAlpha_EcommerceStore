@@ -1,3 +1,4 @@
+import User from '../models/User.js';
 import { verifyToken } from '../utils/jwt.js';
 
 function parseBearer(req) {
@@ -6,17 +7,30 @@ function parseBearer(req) {
 }
 
 // 401 unless a valid Bearer token is present.
-export function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
   const token = parseBearer(req);
   if (!token) {
     return res.status(401).json({ error: 'Sign in to continue.' });
   }
+  let payload;
   try {
-    const payload = verifyToken(token);
-    req.user = { id: payload.sub, role: payload.role };
-    return next();
+    payload = verifyToken(token);
   } catch {
     return res.status(401).json({ error: 'Your session expired. Sign in again.' });
+  }
+  try {
+    // The token proves who the caller claims to be; the database decides what
+    // that account may do. Role always comes from the user document, so a
+    // forged "role" claim is worthless and demoted or deleted accounts lose
+    // access immediately — not at token expiry.
+    const user = await User.findById(payload.sub).select('role').lean();
+    if (!user) {
+      return res.status(401).json({ error: 'Your session expired. Sign in again.' });
+    }
+    req.user = { id: user._id.toString(), role: user.role };
+    return next();
+  } catch (err) {
+    return next(err);
   }
 }
 
@@ -31,14 +45,18 @@ export function requireAdmin(req, res, next) {
   });
 }
 
-// Attaches req.user when a valid token is present; never rejects.
-// Used on public routes that behave slightly differently for admins.
-export function optionalAuth(req, res, next) {
+// Attaches req.user when a valid token belonging to an existing user is
+// present; never rejects. Used on public routes that behave slightly
+// differently for admins.
+export async function optionalAuth(req, res, next) {
   const token = parseBearer(req);
   if (token) {
     try {
       const payload = verifyToken(token);
-      req.user = { id: payload.sub, role: payload.role };
+      const user = await User.findById(payload.sub).select('role').lean();
+      if (user) {
+        req.user = { id: user._id.toString(), role: user.role };
+      }
     } catch {
       // Ignore invalid tokens on public routes.
     }

@@ -64,9 +64,14 @@ npm run dev                # API on http://localhost:5001
 
 # in a second terminal
 cd frontend
+cp .env.example .env       # dev default: VITE_API_URL unset — the Vite proxy talks to the API
 npm install
 npm run dev                # UI on http://localhost:5173
 ```
+
+> Both `.env` files are required. The backend refuses to start without `JWT_SECRET`.
+> In development the UI reaches the API through the Vite proxy (`/api` → `http://127.0.0.1:5001`),
+> so no CORS is involved; `VITE_API_URL` is only for a backend on another origin.
 
 ### 3.4 Seed logins
 

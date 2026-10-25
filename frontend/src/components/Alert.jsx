@@ -15,7 +15,7 @@ const TONES = {
   },
 };
 
-export default function Alert({ tone = 'error', children, onRetry }) {
+export default function Alert({ tone = 'error', children, onRetry, onDismiss, dismissLabel = 'Dismiss' }) {
   const t = TONES[tone] || TONES.error;
   return (
     <div
@@ -26,14 +26,27 @@ export default function Alert({ tone = 'error', children, onRetry }) {
         <Icon name={t.icon} className="mt-0.5 text-base" />
         <span>{children}</span>
       </span>
-      {onRetry && (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="shrink-0 font-label-md uppercase tracking-wider underline underline-offset-4"
-        >
-          Try again
-        </button>
+      {(onRetry || onDismiss) && (
+        <span className="flex shrink-0 items-center gap-3">
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="font-label-md uppercase tracking-wider underline underline-offset-4"
+            >
+              {dismissLabel}
+            </button>
+          )}
+          {onRetry && (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="font-label-md uppercase tracking-wider underline underline-offset-4"
+            >
+              Try again
+            </button>
+          )}
+        </span>
       )}
     </div>
   );

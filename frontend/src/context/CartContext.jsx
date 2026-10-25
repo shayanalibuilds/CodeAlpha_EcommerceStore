@@ -98,6 +98,9 @@ export function CartProvider({ children }) {
   const { user, ready } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  // One-time notice about how the guest cart merged on sign-in (adjusted /
+  // dropped / kept lines). Shown in the bag; null when there is nothing to say.
+  const [mergeNotice, setMergeNotice] = useState(null);
   const itemsRef = useRef(items);
   itemsRef.current = items;
 
@@ -107,6 +110,7 @@ export function CartProvider({ children }) {
     let cancelled = false;
     (async () => {
       setLoading(true);
+      setMergeNotice(null);
       try {
         if (user) {
           let serverItems = [];
@@ -118,15 +122,75 @@ export function CartProvider({ children }) {
           }
           const guestItems = readGuest();
           if (guestItems.length) {
+            // Merge guest lines without ever losing one silently:
+            //   - merged as-is when the shelf can take the full qty;
+            //   - 409 (stock conflict / cap): merge whatever still fits and
+            //     tell the user the line was adjusted;
+            //   - 404 (product gone/archived): report the line as dropped;
+            //   - anything else (network, 5xx): KEEP the line in the guest
+            //     cart so the next sign-in retries the merge.
+            const kept = [];
+            const adjusted = [];
+            const dropped = [];
             for (const gi of guestItems) {
               try {
                 const data = await addCartItem(gi.productId, gi.qty);
                 serverItems = data.cart.items;
-              } catch {
-                // out of stock or product gone — drop the guest line silently
+              } catch (err) {
+                if (err?.status === 404) {
+                  dropped.push(gi); // product gone — nothing to merge
+                  continue;
+                }
+                if (err?.status !== 409) {
+                  kept.push(gi); // transient — retry on the next sign-in
+                  continue;
+                }
+                // Stock conflict: the shelf cannot take the full guest qty on
+                // top of the server cart. Cap the line to what still fits.
+                try {
+                  const [cartNow, productNow] = await Promise.all([
+                    getCart(),
+                    getProduct(gi.productId).catch(() => null),
+                  ]);
+                  serverItems = cartNow.cart.items;
+                  const p = productNow?.product;
+                  const inCart =
+                    serverItems.find((i) => i.productId === gi.productId)?.qty || 0;
+                  const fits =
+                    p && !p.archived && Number.isFinite(p.stock)
+                      ? Math.max(0, Math.min(gi.qty, p.stock - inCart))
+                      : 0;
+                  if (fits > 0) {
+                    const data = await addCartItem(gi.productId, fits);
+                    serverItems = data.cart.items;
+                    adjusted.push({ ...gi, qty: fits });
+                  } else {
+                    dropped.push(gi); // nothing fits — out of stock
+                  }
+                } catch {
+                  kept.push(gi); // could not resolve — retry later
+                }
               }
             }
-            writeGuest([]);
+            // Only lines that still need a retry stay in guest storage.
+            writeGuest(kept);
+            const parts = [];
+            if (adjusted.length) {
+              parts.push(
+                `${adjusted.length} ${adjusted.length === 1 ? 'item was' : 'items were'} adjusted to the available stock.`
+              );
+            }
+            if (dropped.length) {
+              parts.push(
+                `${dropped.length} ${dropped.length === 1 ? 'item' : 'items'} could not be merged — out of stock or no longer available.`
+              );
+            }
+            if (kept.length) {
+              parts.push(
+                `${kept.length} ${kept.length === 1 ? 'item' : 'items'} could not be merged just now — ${kept.length === 1 ? 'it stays' : 'they stay'} in your bag to try again.`
+              );
+            }
+            if (parts.length && !cancelled) setMergeNotice(parts.join(' '));
           }
           if (!cancelled) setItems(serverItems.map(normalize));
         } else if (!cancelled) {
@@ -281,6 +345,8 @@ export function CartProvider({ children }) {
     writeGuest([]);
   }, []);
 
+  const dismissMergeNotice = useCallback(() => setMergeNotice(null), []);
+
   // Re-sync with the server cart (used after order placement / login edge cases).
   const refresh = useCallback(async () => {
     if (!userRef.current) return;
@@ -303,8 +369,20 @@ export function CartProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ items, count, subtotalCents, loading, add, updateQty, remove, clear, refresh }),
-    [items, count, subtotalCents, loading, add, updateQty, remove, clear, refresh]
+    () => ({
+      items,
+      count,
+      subtotalCents,
+      loading,
+      add,
+      updateQty,
+      remove,
+      clear,
+      refresh,
+      mergeNotice,
+      dismissMergeNotice,
+    }),
+    [items, count, subtotalCents, loading, add, updateQty, remove, clear, refresh, mergeNotice, dismissMergeNotice]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

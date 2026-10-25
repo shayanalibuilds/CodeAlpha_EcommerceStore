@@ -92,6 +92,7 @@ export default function AdminLayout({ section = 'Console', children }) {
                 await logout();
                 navigate('/');
               }}
+              aria-label="Sign out"
               className="flex items-center gap-1.5 border border-border-grid px-2.5 py-1.5 font-label-sm uppercase tracking-wider text-text-muted transition-colors hover:border-border-strong hover:text-text-primary"
             >
               <Icon name="logout" className="text-[16px]" />

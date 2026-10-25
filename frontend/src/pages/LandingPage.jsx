@@ -4,6 +4,7 @@ import { listProducts } from '../api/products.js';
 import { useApi } from '../hooks/useApi.js';
 import { useCart } from '../context/CartContext.jsx';
 import Price from '../components/Price.jsx';
+import Alert from '../components/Alert.jsx';
 import Icon from '../components/Icon.jsx';
 import { CATEGORY_LABELS, CATEGORY_KEYS } from '../components/categories.js';
 
@@ -20,7 +21,9 @@ const out = (p) => p?.stock === 0;
 export default function LandingPage() {
   const navigate = useNavigate();
   const { add } = useCart();
-  const { data, loading } = useApi(() => listProducts({}), []);
+  // error/retry are surfaced to the user (like the Catalog page): a failed
+  // request must never read as an empty shop.
+  const { data, loading, error, retry } = useApi(() => listProducts({}), []);
   const items = data?.items || [];
   const { lead, rest } = pickShowcase(items);
   const curated = rest.slice(0, 4);
@@ -100,7 +103,7 @@ export default function LandingPage() {
             </div>
             <div className="mt-14 flex w-full items-center justify-between border-t border-border-grid pt-6 text-xs text-text-muted">
               <div className="flex items-center gap-3">
-                <span className="text-base font-bold text-text-primary">{loading ? '—' : items.length} curated goods</span>
+                <span className="text-base font-bold text-text-primary">{loading || error ? '—' : items.length} curated goods</span>
                 <span className="text-border-grid">|</span>
                 <span className="uppercase tracking-wider">Live stock &amp; orders in this demo</span>
               </div>
@@ -115,7 +118,12 @@ export default function LandingPage() {
                 Loading the archive…
               </div>
             )}
-            {!loading && lead && (
+            {!loading && error && (
+              <div className="p-6 md:p-8">
+                <Alert onRetry={retry}>Could not load the showcase: {error.message}</Alert>
+              </div>
+            )}
+            {!loading && !error && lead && (
               <>
                 {/* Lead highlight */}
                 <div className="p-6 md:p-8">
@@ -305,7 +313,12 @@ export default function LandingPage() {
               Loading curated pieces…
             </div>
           )}
-          {!loading && curated.length === 0 && (
+          {!loading && error && (
+            <div className="col-span-full">
+              <Alert onRetry={retry}>Could not load curated pieces: {error.message}</Alert>
+            </div>
+          )}
+          {!loading && !error && curated.length === 0 && (
             <div className="col-span-full border border-border-grid p-10 text-center font-label-md uppercase tracking-widest text-text-muted">
               The archive is being restocked.
             </div>
