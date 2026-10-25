@@ -294,3 +294,71 @@ describe('PATCH /api/orders/:id/status (admin)', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('POST /api/orders/:id/cancel (customer self-service)', () => {
+  async function placeOrder(buyer = alice) {
+    const pen = (await Product.findOne({ slug: 'gel-pen-rainbow-set' }).lean())._id.toString();
+    await addToCart(buyer.token, pen, 2);
+    const res = await api()
+      .post('/api/orders')
+      .set('Authorization', `Bearer ${buyer.token}`)
+      .send({ address: ADDRESS, paymentMethod: 'card' });
+    return res.body.order.id;
+  }
+
+  it('lets the owner cancel a placed order and restocks it', async () => {
+    const orderId = await placeOrder();
+    expect(await stockOf('gel-pen-rainbow-set')).toBe(8);
+
+    const res = await api()
+      .post(`/api/orders/${orderId}/cancel`)
+      .set('Authorization', `Bearer ${alice.token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.order.status).toBe('cancelled');
+    expect(await stockOf('gel-pen-rainbow-set')).toBe(10);
+
+    // A repeat click is an idempotent no-op — no double restock.
+    const again = await api()
+      .post(`/api/orders/${orderId}/cancel`)
+      .set('Authorization', `Bearer ${alice.token}`);
+    expect(again.status).toBe(200);
+    expect(await stockOf('gel-pen-rainbow-set')).toBe(10);
+  });
+
+  it("cannot cancel someone else's order (404, stock untouched)", async () => {
+    const orderId = await placeOrder();
+
+    const res = await api()
+      .post(`/api/orders/${orderId}/cancel`)
+      .set('Authorization', `Bearer ${bob.token}`);
+
+    expect(res.status).toBe(404);
+    expect(await stockOf('gel-pen-rainbow-set')).toBe(8);
+    const mine = await api().get(`/api/orders/${orderId}`).set('Authorization', `Bearer ${alice.token}`);
+    expect(mine.body.order.status).toBe('placed');
+  });
+
+  it('cannot cancel once the order is packed or shipped', async () => {
+    const orderId = await placeOrder();
+    for (const status of ['packed', 'shipped']) {
+      await api()
+        .patch(`/api/orders/${orderId}/status`)
+        .set('Authorization', `Bearer ${admin.token}`)
+        .send({ status });
+
+      const res = await api()
+        .post(`/api/orders/${orderId}/cancel`)
+        .set('Authorization', `Bearer ${alice.token}`);
+      expect(res.status).toBe(400);
+      expect(res.body.error).toMatch(new RegExp(status));
+    }
+    expect(await stockOf('gel-pen-rainbow-set')).toBe(8);
+  });
+
+  it('requires sign-in', async () => {
+    const orderId = await placeOrder();
+    const res = await api().post(`/api/orders/${orderId}/cancel`);
+    expect(res.status).toBe(401);
+  });
+});
