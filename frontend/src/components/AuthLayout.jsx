@@ -43,8 +43,9 @@ export default function AuthLayout({ active, children }) {
             </div>
           </div>
           <p className="mt-2 font-body-sm text-text-muted">
-            Sign in with your email and password to browse the catalog, keep a bag, and place
-            orders — a student-run market demo.
+            {isSignIn
+              ? 'Sign in with your email and password to keep your bag, check out, and see your orders.'
+              : 'Create a free account with your name, email, and a password to save your bag, place orders, and track them.'}
           </p>
         </div>
 
@@ -84,7 +85,7 @@ export default function AuthLayout({ active, children }) {
               <span className="h-1.5 w-1.5 bg-accent-pine" aria-hidden="true" />
               <span>Email &amp; password sign-in</span>
             </span>
-            <span>MOCK LEDGER · ZERO CHARGES</span>
+            <span>MOCK PAYMENTS · NO REAL CHARGES</span>
           </div>
           <p className="font-body-sm leading-relaxed text-text-muted">
             Payments are mocked — no real card is ever charged, and seeded demo accounts are safe
