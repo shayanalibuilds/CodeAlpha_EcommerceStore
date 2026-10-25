@@ -48,7 +48,7 @@ export default function ProductCard({ product }) {
             {out ? (
               <span className="absolute right-2 top-2 z-10 flex items-center gap-1.5 border border-border-grid bg-surface-container-highest px-2 py-0.5 font-label-sm uppercase tracking-wider text-secondary">
                 <span className="h-1.5 w-1.5 bg-secondary" aria-hidden="true" />
-                Archived / Sold Out
+                Sold out
               </span>
             ) : low ? (
               <span className="absolute right-2 top-2 z-10 flex items-center gap-1.5 border border-border-grid bg-white px-2 py-0.5 font-label-sm text-error">
