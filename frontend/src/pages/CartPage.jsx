@@ -89,7 +89,7 @@ export default function CartPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
-          <span className="font-label-md text-on-surface-variant">BAG MANIFEST:</span>
+          <span className="font-label-md text-on-surface-variant">YOUR BAG:</span>
           <span className="font-label-md font-semibold text-accent-pine">{count} / UNITS</span>
         </div>
       </div>
