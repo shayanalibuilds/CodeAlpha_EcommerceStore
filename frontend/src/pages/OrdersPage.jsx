@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listOrders } from '../api/orders.js';
 import { useApi } from '../hooks/useApi.js';
@@ -6,6 +7,7 @@ import Alert from '../components/Alert.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { PageLoader } from '../components/Spinner.jsx';
 import Icon from '../components/Icon.jsx';
+import CancelOrderButton from '../components/CancelOrderButton.jsx';
 import {
   STATUS_LABELS,
   STATUS_CHIP,
@@ -17,6 +19,8 @@ import {
 
 export default function OrdersPage() {
   const { data, loading, error, retry } = useApi(() => listOrders(), []);
+  // Orders the customer cancelled on this page, by id (no full reload needed).
+  const [updated, setUpdated] = useState({});
 
   if (loading) return <PageLoader label="Loading your orders…" />;
 
@@ -28,7 +32,7 @@ export default function OrdersPage() {
     );
   }
 
-  const orders = data?.orders || [];
+  const orders = (data?.orders || []).map((o) => updated[o.id] || o);
 
   if (orders.length === 0) {
     return (
@@ -55,7 +59,7 @@ export default function OrdersPage() {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <span className="font-label-md font-semibold uppercase tracking-widest text-accent-pine">
-              Client Ledger
+              My orders
             </span>
             <span className="text-outline" aria-hidden="true">/</span>
             <span className="font-label-md uppercase tracking-widest text-on-surface-variant">
@@ -63,7 +67,7 @@ export default function OrdersPage() {
             </span>
           </div>
           <h1 className="font-headline-lg tracking-tight text-on-surface">My Orders</h1>
-          <p className="mt-1 font-body-sm text-text-muted">Your order history and dispatch receipts.</p>
+          <p className="mt-1 font-body-sm text-text-muted">Your past orders and receipts. You can cancel an order until it is packed.</p>
         </div>
         <div className="flex items-center gap-2 border border-border-grid bg-white px-4 py-2">
           <span className="font-label-md text-on-surface-variant">RECORDS:</span>
@@ -74,10 +78,13 @@ export default function OrdersPage() {
       {/* Order card ledger */}
       <ul className="mt-8 flex flex-col">
         {orders.map((o, idx) => (
-          <li key={o.id} className={idx > 0 ? 'border-t border-border-grid' : ''}>
+          <li
+            key={o.id}
+            className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${idx > 0 ? 'border-t border-border-grid' : ''} ${o.status === 'placed' ? 'pb-4 sm:pb-0' : ''}`}
+          >
             <Link
               to={`/orders/${o.id}`}
-              className="group flex flex-wrap items-center justify-between gap-4 py-4 transition-colors hover:bg-surface-container-low/60"
+              className="group flex min-w-0 flex-1 flex-wrap items-center justify-between gap-4 py-4 transition-colors hover:bg-surface-container-low/60"
             >
               <div className="flex items-center gap-4">
                 <span className="flex h-11 w-11 items-center justify-center border border-border-grid bg-white text-text-muted transition-colors group-hover:border-border-strong group-hover:text-on-surface">
@@ -102,6 +109,10 @@ export default function OrdersPage() {
                 <Icon name="arrow_forward" className="text-text-muted transition-colors group-hover:text-on-surface" />
               </div>
             </Link>
+            <CancelOrderButton
+              order={o}
+              onCancelled={(next) => setUpdated((m) => ({ ...m, [next.id]: next }))}
+            />
           </li>
         ))}
       </ul>
