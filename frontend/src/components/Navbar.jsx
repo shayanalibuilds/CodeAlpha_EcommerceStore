@@ -166,7 +166,7 @@ export default function Navbar() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full bg-transparent text-xs uppercase tracking-wider focus:outline-none"
-                placeholder="Search the archive…"
+                placeholder="Search products…"
                 aria-label="Search products"
               />
             </div>
