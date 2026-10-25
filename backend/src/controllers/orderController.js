@@ -101,3 +101,34 @@ export const updateStatus = wrap(async (req, res) => {
       : `An order that is "${order.status}" cannot change status.`,
   });
 });
+
+// Customer self-service cancel. The owner may cancel only while the order is
+// still "placed" (not yet packed or shipped). Same race-safe pattern as
+// updateStatus: one conditional update claims the transition, and only the
+// request that flipped it restocks — duplicate clicks can never restock twice.
+export const cancelOwn = wrap(async (req, res) => {
+  const { id } = req.params;
+  if (!OBJECT_ID.test(id)) throw new HttpError(404, 'Order not found.');
+
+  const owner = { _id: id, user: req.user.id };
+  const updated = await Order.findOneAndUpdate(
+    { ...owner, status: 'placed' },
+    { $set: { status: 'cancelled' } },
+    { new: true }
+  );
+  if (updated) {
+    await restockOrder(updated);
+    return res.json({ order: toPublicOrder(updated.toObject()) });
+  }
+
+  // Not ours (plain 404, never leak existence), already cancelled (idempotent),
+  // or too far along to cancel.
+  const order = await Order.findOne(owner).lean();
+  if (!order) throw new HttpError(404, 'Order not found.');
+  if (order.status === 'cancelled') return res.json({ order: toPublicOrder(order) });
+  throw new HttpError(
+    400,
+    `This order is already ${order.status} and can no longer be cancelled.`,
+    { status: 'Orders can only be cancelled before they are packed.' }
+  );
+});
