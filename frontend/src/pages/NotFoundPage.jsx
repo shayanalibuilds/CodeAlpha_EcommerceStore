@@ -14,7 +14,7 @@ export default function NotFoundPage() {
         <h1 className="font-headline-md uppercase tracking-tight text-on-surface">Page not found</h1>
         <p className="mt-space-xs max-w-sm font-body-sm leading-relaxed text-text-muted">
           The page you were looking for does not exist or may have moved to another section of
-          the archive.
+          the catalog.
         </p>
         <Link to="/" className="btn-primary mt-space-lg">
           Back to the market
