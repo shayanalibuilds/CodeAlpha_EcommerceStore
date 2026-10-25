@@ -71,6 +71,16 @@ describe('GET /api/products (public catalog)', () => {
     expect(byNewest.body.items[0].slug).toBe('sprout-everyday-backpack'); // last inserted
   });
 
+  it('sorts by price descending with sort=price_desc', async () => {
+    await seedProducts();
+
+    const res = await api().get('/api/products?sort=price_desc');
+    expect(res.status).toBe(200);
+    const prices = res.body.items.map((p) => p.priceCents);
+    expect(prices.length).toBeGreaterThan(1);
+    expect(prices).toEqual([...prices].sort((a, b) => b - a));
+  });
+
   it('hides archived products from the public list', async () => {
     await seedProducts();
     await Product.updateOne({ slug: 'gel-pen-rainbow-set' }, { archived: true });
