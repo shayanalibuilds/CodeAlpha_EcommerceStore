@@ -26,3 +26,22 @@ export function RequireAdmin({ children }) {
   if (user.role !== 'admin') return <Navigate to="/forbidden" replace />;
   return children;
 }
+
+// Where to send someone after sign-in: router state first, then ?next=,
+// else home. Only same-site paths are honored (no "//evil.com" redirects).
+export function nextPath(location) {
+  const candidate = location.state?.next || new URLSearchParams(location.search).get('next') || '/';
+  return typeof candidate === 'string' && candidate.startsWith('/') && !candidate.startsWith('//')
+    ? candidate
+    : '/';
+}
+
+// /login and /register are for guests only — signed-in users go home (or ?next).
+export function GuestOnly({ children }) {
+  const { user, ready } = useAuth();
+  const location = useLocation();
+
+  if (!ready) return <PageLoader label="Checking your session…" />;
+  if (user) return <Navigate to={nextPath(location)} replace />;
+  return children;
+}
