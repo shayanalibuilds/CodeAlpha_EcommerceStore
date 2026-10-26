@@ -129,11 +129,11 @@ export default function LandingPage() {
                 <div className="p-6 md:p-8">
                   <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-12">
                     <Link to={`/products/${lead.id}`} className="md:col-span-6">
-                      <div className="flex aspect-square items-center justify-center border border-border-grid bg-surface-container-low p-4">
+                      <div className="aspect-square overflow-hidden border border-border-grid bg-surface-container-low">
                         <img
                           src={lead.imageUrl || '/images/products/placeholder.svg'}
                           alt={lead.title}
-                          className="h-full w-full object-cover contrast-[105%] grayscale-[15%]"
+                          className="h-full w-full object-cover"
                         />
                       </div>
                     </Link>
@@ -177,11 +177,11 @@ export default function LandingPage() {
                     <div key={p.id} className="flex flex-col justify-between p-6">
                       <div>
                         <Link to={`/products/${p.id}`} className="block">
-                          <div className="mb-4 flex aspect-[4/3] items-center justify-center border border-border-grid bg-surface-container-low p-4">
+                          <div className="mb-4 aspect-[4/3] overflow-hidden border border-border-grid bg-surface-container-low">
                             <img
                               src={p.imageUrl || '/images/products/placeholder.svg'}
                               alt={p.title}
-                              className="h-full w-full object-cover grayscale-[15%]"
+                              className="h-full w-full object-cover"
                             />
                           </div>
                         </Link>
@@ -330,12 +330,12 @@ export default function LandingPage() {
             >
               <div>
                 <Link to={`/products/${p.id}`} className="block">
-                  <div className="relative mb-6 flex aspect-square items-center justify-center border border-border-grid bg-white p-4">
+                  <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-border-grid bg-surface-container-low">
                     <img
                       src={p.imageUrl || '/images/products/placeholder.svg'}
                       alt={p.title}
                       loading="lazy"
-                      className="h-full w-full object-cover grayscale-[15%]"
+                      className="h-full w-full object-cover"
                     />
                     <span className="absolute left-2 top-2 border border-border-grid bg-white px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider">
                       {CATEGORY_LABELS[p.category] || p.category}
