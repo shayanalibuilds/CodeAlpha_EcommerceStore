@@ -36,19 +36,6 @@ function StockBadge({ stock }) {
 }
 
 /* Architectural compass-grid stage backdrop (from the design's CAD orbit plate). */
-function CompassGrid() {
-  return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.05]">
-      <svg className="stroke-on-surface" fill="none" height="420" viewBox="0 0 100 100" width="420">
-        <circle cx="50" cy="50" r="45" strokeDasharray="2 2" strokeWidth="0.5" />
-        <circle cx="50" cy="50" r="30" strokeWidth="0.5" />
-        <circle cx="50" cy="50" r="15" strokeDasharray="1 1" strokeWidth="0.5" />
-        <line strokeWidth="0.5" x1="50" x2="50" y1="0" y2="100" />
-        <line strokeWidth="0.5" x1="0" x2="100" y1="50" y2="50" />
-      </svg>
-    </div>
-  );
-}
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -163,12 +150,11 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Centerpiece stage */}
-              <div className="group relative mt-4 mb-6 flex w-full items-center justify-center overflow-hidden border border-border-grid bg-surface-container-low p-6 sm:p-10">
-                <CompassGrid />
+              <div className="group relative mt-4 mb-6 aspect-[4/3] w-full overflow-hidden border border-border-grid bg-surface-container-low">
                 <img
                   src={product.imageUrl || '/images/products/placeholder.svg'}
                   alt={product.title}
-                  className="relative z-10 max-h-[480px] w-full max-w-[420px] object-contain py-2 transition-transform duration-300 ease-out group-hover:scale-[1.01]"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                 />
                 <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 border border-border-grid bg-surface px-2 py-1 font-label-sm text-on-surface-variant">
                   <Icon name="image" className="text-sm" />
