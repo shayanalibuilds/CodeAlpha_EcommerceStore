@@ -12,7 +12,7 @@ const FIXTURES = [
 ];
 
 async function seedProducts() {
-  await Product.insertMany(FIXTURES.map((p) => ({ ...p, imageUrl: `/images/products/${p.slug}.svg` })));
+  await Product.insertMany(FIXTURES.map((p) => ({ ...p, imageUrl: `/images/products/${p.slug}.jpg` })));
 }
 
 beforeAll(startDb);

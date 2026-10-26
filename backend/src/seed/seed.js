@@ -58,7 +58,7 @@ async function main() {
   }
 
   await Product.insertMany(
-    PRODUCTS.map((p) => ({ ...p, imageUrl: `/images/products/${p.slug}.svg`, archived: false }))
+    PRODUCTS.map((p) => ({ ...p, imageUrl: `/images/products/${p.slug}.jpg`, archived: false }))
   );
 
   const counts = {

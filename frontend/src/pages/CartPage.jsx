@@ -110,11 +110,11 @@ export default function CartPage() {
               className={`flex gap-4 py-space-md ${idx > 0 ? 'border-t border-border-grid' : ''}`}
             >
               <Link to={`/products/${item.productId}`} className="shrink-0">
-                <div className="flex h-24 w-24 items-center justify-center border border-border-grid bg-surface-container-low sm:h-28 sm:w-28">
+                <div className="h-24 w-24 overflow-hidden border border-border-grid bg-surface-container-low sm:h-28 sm:w-28">
                   <img
                     src={item.imageUrl || '/images/products/placeholder.svg'}
                     alt={item.title}
-                    className="h-full w-full object-cover grayscale-[15%]"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </Link>
